@@ -75,8 +75,8 @@ VALUES ("Yoga", "18:00:00", 60),
 CREATE TABLE IF NOT EXISTS miembro_clase (
     id_miembro INT NOT NULL,
     id_clase INT NOT NULL,
-    fecha_inscripcion DATE,
-    novato BOOLEAN,
+    fecha_inscripcion DATE NOT NULL,
+    novato BOOLEAN NOT NULL,
     PRIMARY KEY (id_miembro, id_clase),
     FOREIGN KEY (id_miembro) REFERENCES miembros(id_miembro) ON DELETE CASCADE, -- que si elimino el miembro se elimina el registro de este
     FOREIGN KEY (id_clase) REFERENCES clases(id_clase) ON DELETE CASCADE
