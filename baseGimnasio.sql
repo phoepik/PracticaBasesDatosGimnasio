@@ -19,11 +19,11 @@ VALUES ("Normal", 29.99, "La membresía más básica, no incluye clases ni entre
 CREATE TABLE IF NOT EXISTS especialidades (
     id_especialidad INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
-    cobro_extra DECIMAL(8,2) NOT NULL,
+    paga_extra DECIMAL(8,2) NOT NULL,
     descripcion VARCHAR(200) -- Puede tener o no tener descripcion
 );
 -- se tendra q hacer con los valores q le meta de un enum en java (borrar luego la consulta)
-INSERT INTO especialidades (nombre, cobro_extra) -- sin desc porque lo queria a null para empezar
+INSERT INTO especialidades (nombre, paga_extra) -- sin desc porque lo queria a null para empezar
 VALUES ("Boxeo", 40.00),
 ("Futbol", 10.00),
 ("Tennis", 15.00);
@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS entrenadores (
     dni VARCHAR(150) UNIQUE NOT NULL,
     correo VARCHAR(150) NOT NULL,
     telefono VARCHAR(150) NOT NULL,
+    sueldo DECIMAL NOT NULL,
     id_especialidad INT, -- Puede tener o no especialidad
     FOREIGN KEY (id_especialidad) references especialidades(id_especialidad)
 );
@@ -58,14 +59,14 @@ CREATE TABLE IF NOT EXISTS miembros (
 CREATE TABLE IF NOT EXISTS clases (
     id_clase INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
-    horario TIME NOT NULL,
+    hora_inicio TIME NOT NULL,
     duracion_minutos INT NOT NULL,
-    descripcion VARCHAR(200),
+    descripcion VARCHAR(200),-- opcional
 	id_entrenador INT,	-- por si quiero crear la clase y no hay entrenador aun asignado
     FOREIGN KEY (id_entrenador) REFERENCES entrenadores(id_entrenador)
 );
 
-INSERT INTO clases (nombre, horario, duracion_minutos)
+INSERT INTO clases (nombre, hora_inicio, duracion_minutos)
 VALUES ("Yoga", "18:00:00", 60),
 ("Boxeo", "19:00:00", 60),
 ("Crossfit", "20:00:00", 60),
