@@ -24,6 +24,9 @@ public class Vista extends JFrame{
     private JComboBox comboMembresiaMiembro;
     private JComboBox comboEntrenadorMiembro;
     private JTable tablaMiembro;
+    private JButton insertarMiembroButton;
+    private JButton modificarMiembroButton;
+    private JButton eliminarMiembroButton;
 
     // Entrenadores
     private JPanel JPanelEntrenadores;
@@ -35,23 +38,31 @@ public class Vista extends JFrame{
     private JTextField txtSueldoEntrenador;
     private JComboBox comboEspecialidadEntrenador;
     private JTable tablaEntrenador;
+    private JButton modificarEntrenadorButton;
+    private JButton insertarEntrenadorButton;
+    private JButton eliminarEntrenadorButton;
 
     // Clases
     private JPanel JPanelClases;
-    private JSpinner horaInicioClase;
     private JTextField txtNombreClase;
+    private JTextField txtHoraInicioClase;
     private JTextField txtDuracionClase;
     private JComboBox comboEntrenadorClase;
     private JTextField txtDescripcionClase;
     private JTable tablaClase;
+    private JButton insertarClaseButton;
+    private JButton modificarClaseButton;
+    private JButton eliminarClaseButton;
 
     // Especialidades
     private JPanel JPanelEspecialidades;
     private JTable tablaEspecialidad;
+    private JButton consultarEspecialidadButton;
 
     // Membresias
     private JPanel JPanelMembresias;
     private JTable tablaMembresia;
+    private JButton consultarMembresiaButton;
 
     // MiembrosClase
     private JPanel JPanelMiembrosClase;
@@ -60,6 +71,10 @@ public class Vista extends JFrame{
     private DatePicker fechaInscripcionMiembrosClase;
     private JCheckBox checkBoxNovatoMiembrosClase;
     private JTable tablaMiembrosClase;
+    private JButton insertarMiembroClaseButton;
+    private JButton modificarMiembroClaseButton;
+    private JButton eliminarMiembroClaseButton;
+
 
     // Default table model
     DefaultTableModel dtmMiembros;
