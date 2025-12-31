@@ -8,72 +8,72 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 
-public class Vista extends JFrame{
+public class Vista extends JFrame {
     private JPanel panel1;
     private JTabbedPane tabbedPane1;
-    private final static String TITULO_FRAME="Aplicacion gimnasio";
+    private final static String TITULO_FRAME = "Aplicacion gimnasio";
 
     // Miembros
-    private JPanel JPanelMiembros;
-    private JTextField txtNombreMiembro;
-    private JTextField txtApellidoMiembro;
-    private DatePicker txtFechaNacimientoMiembro;
-    private JTextField txtDniMiembro;
-    private JTextField txtTelefonoMiembro;
-    private JTextField txtCorreoMiembro;
-    private JComboBox comboMembresiaMiembro;
-    private JComboBox comboEntrenadorMiembro;
-    private JTable tablaMiembro;
-    private JButton insertarMiembroButton;
-    private JButton modificarMiembroButton;
-    private JButton eliminarMiembroButton;
+    JPanel JPanelMiembros;
+    JTextField txtNombreMiembro;
+    JTextField txtApellidoMiembro;
+    DatePicker txtFechaNacimientoMiembro;
+    JTextField txtDniMiembro;
+    JTextField txtTelefonoMiembro;
+    JTextField txtCorreoMiembro;
+    JComboBox comboMembresiaMiembro;
+    JComboBox comboEntrenadorMiembro;
+    JTable tablaMiembro;
+    JButton insertarMiembroButton;
+    JButton modificarMiembroButton;
+    JButton eliminarMiembroButton;
 
     // Entrenadores
-    private JPanel JPanelEntrenadores;
-    private JTextField txtNombreEntrenador;
-    private JTextField txtApellidoEntrenador;
-    private JTextField txtDniEntrenador;
-    private JTextField txtCorreoEntrenador;
-    private JTextField txtTelefonoEntrenador;
-    private JTextField txtSueldoEntrenador;
-    private JComboBox comboEspecialidadEntrenador;
-    private JTable tablaEntrenador;
-    private JButton modificarEntrenadorButton;
-    private JButton insertarEntrenadorButton;
-    private JButton eliminarEntrenadorButton;
+    JPanel JPanelEntrenadores;
+    JTextField txtNombreEntrenador;
+    JTextField txtApellidoEntrenador;
+    JTextField txtDniEntrenador;
+    JTextField txtCorreoEntrenador;
+    JTextField txtTelefonoEntrenador;
+    JTextField txtSueldoEntrenador;
+    JComboBox comboEspecialidadEntrenador;
+    JTable tablaEntrenador;
+    JButton modificarEntrenadorButton;
+    JButton insertarEntrenadorButton;
+    JButton eliminarEntrenadorButton;
 
     // Clases
-    private JPanel JPanelClases;
-    private JTextField txtNombreClase;
-    private JTextField txtHoraInicioClase;
-    private JTextField txtDuracionClase;
-    private JComboBox comboEntrenadorClase;
-    private JTextField txtDescripcionClase;
-    private JTable tablaClase;
-    private JButton insertarClaseButton;
-    private JButton modificarClaseButton;
-    private JButton eliminarClaseButton;
+    JPanel JPanelClases;
+    JTextField txtNombreClase;
+    JTextField txtHoraInicioClase;
+    JTextField txtDuracionClase;
+    JComboBox comboEntrenadorClase;
+    JTextField txtDescripcionClase;
+    JTable tablaClase;
+    JButton insertarClaseButton;
+    JButton modificarClaseButton;
+    JButton eliminarClaseButton;
 
     // Especialidades
-    private JPanel JPanelEspecialidades;
-    private JTable tablaEspecialidad;
-    private JButton consultarEspecialidadButton;
+    JPanel JPanelEspecialidades;
+    JTable tablaEspecialidad;
+    JButton consultarEspecialidadButton;
 
     // Membresias
-    private JPanel JPanelMembresias;
-    private JTable tablaMembresia;
-    private JButton consultarMembresiaButton;
+    JPanel JPanelMembresias;
+    JTable tablaMembresia;
+    JButton consultarMembresiaButton;
 
     // MiembrosClase
-    private JPanel JPanelMiembrosClase;
-    private JComboBox comboMiembroMiembrosClase;
-    private JComboBox comboClaseMiembrosClase;
-    private DatePicker fechaInscripcionMiembrosClase;
-    private JCheckBox checkBoxNovatoMiembrosClase;
-    private JTable tablaMiembrosClase;
-    private JButton insertarMiembroClaseButton;
-    private JButton modificarMiembroClaseButton;
-    private JButton eliminarMiembroClaseButton;
+    JPanel JPanelMiembrosClase;
+    JComboBox comboMiembroMiembrosClase;
+    JComboBox comboClaseMiembrosClase;
+    DatePicker fechaInscripcionMiembrosClase;
+    JCheckBox checkBoxNovatoMiembrosClase;
+    JTable tablaMiembrosClase;
+    JButton insertarMiembroClaseButton;
+    JButton modificarMiembroClaseButton;
+    JButton eliminarMiembroClaseButton;
 
 
     // Default table model
@@ -100,7 +100,7 @@ public class Vista extends JFrame{
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.pack();
         //doy dimension
-        this.setSize(new Dimension(this.getWidth()+100,this.getHeight()));
+        this.setSize(new Dimension(this.getWidth() + 100, this.getHeight()));
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         //llamo menu
@@ -118,7 +118,7 @@ public class Vista extends JFrame{
         itemOpciones.setActionCommand("Opciones");
         itemDesconectar = new JMenuItem("Desconectar");
         itemDesconectar.setActionCommand("Desconectar");
-        itemSalir=new JMenuItem("Salir");
+        itemSalir = new JMenuItem("Salir");
         itemSalir.setActionCommand("Salir");
         menu.add(itemOpciones);
         menu.add(itemDesconectar);
@@ -131,13 +131,13 @@ public class Vista extends JFrame{
     private void setEnumComboBox() {
         //recorrer los enumerados y los cargo en el comboBox correspondiente
         // membresias
-        for(Membresia membresia : Membresia.values()){
+        for (Membresia membresia : Membresia.values()) {
             comboMembresiaMiembro.addItem(membresia.getNombre());
         }
         comboMembresiaMiembro.setSelectedIndex(-1);
 
         // especialidades
-        for(Especialidad especialidad : Especialidad.values()){
+        for (Especialidad especialidad : Especialidad.values()) {
             comboEspecialidadEntrenador.addItem(especialidad.getNombre());
         }
         comboEspecialidadEntrenador.setSelectedIndex(-1);

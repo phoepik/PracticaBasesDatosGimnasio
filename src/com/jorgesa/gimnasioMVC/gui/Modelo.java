@@ -35,10 +35,12 @@ public class Modelo {
         try {
             conexion = DriverManager.getConnection(
                     "jdbc:mysql://"+ip+":3306/base_gimnasio",user, password);
+            System.out.println("- Conectado a la base correctamente");
         } catch (SQLException sqle) {
             try {
+                System.out.println("- Error inesperado, volviendo a construir la base");
                 conexion = DriverManager.getConnection(
-                        "jdbc:mysql://"+ip+":3306/base_gimnasio",user, password);
+                        "jdbc:mysql://"+ip+":3306/",user, password);
 
                 PreparedStatement statement = null;
 
@@ -50,7 +52,7 @@ public class Modelo {
                 }
                 assert statement != null;
                 statement.close();
-
+                System.out.println("- Base reconstruida exitosamente");
             } catch (SQLException | IOException e) {
                 e.printStackTrace();
             }
@@ -101,6 +103,25 @@ public class Modelo {
                 e.printStackTrace();
             }
         }
+    }
+
+    void setPropValues(String ip, String user, String pass, String adminPass) {
+        try {
+            Properties prop = new Properties();
+            prop.setProperty("ip", ip);
+            prop.setProperty("user", user);
+            prop.setProperty("pass", pass);
+            prop.setProperty("admin", adminPass);
+            OutputStream out = new FileOutputStream("config.properties");
+            prop.store(out, null);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        this.ip = ip;
+        this.user = user;
+        this.password = pass;
+        this.adminPassword = adminPass;
     }
 
     void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, int idMembresia, int idEntrenador) {
@@ -308,6 +329,87 @@ public class Modelo {
             sentencia.setBoolean(2, esNovato);
             sentencia.setInt(3, idMiembro);
             sentencia.setInt(4,idClase);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void eliminarMiembro(int idMiembro) {
+        String sentenciaSql = "DELETE FROM miembros WHERE id_miembro = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setInt(1, idMiembro);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void eliminarEntrenador(int idEntrenador) {
+        String sentenciaSql = "DELETE FROM entrenadores WHERE id_entrenador = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setInt(1, idEntrenador);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void eliminarClase(int idClase) {
+        String sentenciaSql = "DELETE FROM clases WHERE id_clase = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setInt(1, idClase);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void eliminarMiembroClase(int idMiembro, int idClase) {
+        String sentenciaSql = "DELETE FROM miembro_clase WHERE id_miembro = ? AND id_clase = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setInt(1, idMiembro);
+            sentencia.setInt(2, idClase);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
