@@ -593,4 +593,22 @@ public class Modelo {
         }
         return null;
     }
+
+    ResultSet consultarMembresia() {
+        String sentenciaSql = "SELECT id_membresia AS ID, " +
+                "nombre AS Nombre, " +
+                "cuota_mensual AS CuotaMensual, "+
+                "descripcion AS Descripcion " +
+                "FROM membresias";
+        PreparedStatement sentencia;
+        ResultSet resultado;
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            resultado = sentencia.executeQuery();
+            return resultado;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

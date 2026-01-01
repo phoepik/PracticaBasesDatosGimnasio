@@ -25,7 +25,42 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     }
 
     private void refrescarTodo() {
-        refrescarEspecialidades();
+        refrescarEspecialidades();  // no es necesario ya q especialidades nunca cambia
+        refrescarMembresias();  // no es necesario ya q membresias nunca cambia
+    }
+
+    private void refrescarMembresias() {
+        try{
+            vista.tablaMembresia.setModel(construirTableModelMembresias(modelo.consultarMembresia()));
+            vista.comboMembresiaMiembro.removeAllItems();
+            for(int i = 0; i< vista.dtmMembresias.getRowCount();i++){
+                vista.comboMembresiaMiembro.addItem(vista.dtmMembresias.getValueAt(i,0)+" - "+
+                        vista.dtmMembresias.getValueAt(i,1));
+            }
+            vista.comboMembresiaMiembro.setSelectedIndex(-1);
+            System.out.println("- Tabla membresias refrescada" +
+                    " - Combo membresias refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private TableModel construirTableModelMembresias(ResultSet rs) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
+
+        // nombres de las columnas
+        Vector<String> nombresColumnas = new Vector<>();
+        int numColumnas = metaData.getColumnCount();
+        for (int columna = 1; columna <= numColumnas; columna++){
+            nombresColumnas.add(metaData.getColumnLabel(columna));
+        }
+
+        // datos de la tabla
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs,numColumnas,data);
+
+        vista.dtmMembresias.setDataVector(data,nombresColumnas);
+        return vista.dtmMembresias;
     }
 
     private void refrescarEspecialidades() {
@@ -36,7 +71,9 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.comboEspecialidadEntrenador.addItem(vista.dtmEspecialidades.getValueAt(i,0)+" - "+
                 vista.dtmEspecialidades.getValueAt(i,1));
             }
-
+            vista.comboEspecialidadEntrenador.setSelectedIndex(-1);
+            System.out.println("- Tabla especialidades refrescada" +
+                    " - Combo especialidades refrescado");
         } catch (SQLException e){
             e.printStackTrace();
         }
@@ -49,7 +86,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         Vector<String> nombresColumnas = new Vector<>();
         int numColumnas = metaData.getColumnCount();
         for (int columna = 1; columna <= numColumnas; columna++){
-            nombresColumnas.add(metaData.getColumnName(columna));
+            nombresColumnas.add(metaData.getColumnLabel(columna));
         }
 
         // datos de la tabla
