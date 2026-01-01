@@ -576,4 +576,21 @@ public class Modelo {
     }
 
 
+    ResultSet consultarEspecialidad() {
+        String sentenciaSql = "SELECT id_especialidad AS ID, " +
+                "nombre AS Nombre, " +
+                "paga_extra AS PagaExtra, "+
+                "descripcion AS Descripcion " +
+                "FROM especialidades";
+        PreparedStatement sentencia;
+        ResultSet resultado;
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            resultado = sentencia.executeQuery();
+            return resultado;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }
