@@ -3,14 +3,14 @@ CREATE DATABASE IF NOT EXISTS base_gimnasio;
 USE base_gimnasio;
 --
 CREATE TABLE IF NOT EXISTS membresias (
-    id_membresia INT AUTO_INCREMENT PRIMARY KEY,
+    id_membresia INT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     cuota_mensual DECIMAL(8,2) NOT NULL,
     descripcion VARCHAR(200)
 );
 --
 CREATE TABLE IF NOT EXISTS especialidades (
-    id_especialidad INT AUTO_INCREMENT PRIMARY KEY,
+    id_especialidad INT PRIMARY KEY,
     nombre VARCHAR(150) NOT NULL,
     paga_extra DECIMAL(8,2) NOT NULL,
     descripcion VARCHAR(200)

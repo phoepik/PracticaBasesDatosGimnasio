@@ -132,13 +132,13 @@ public class Vista extends JFrame {
         //recorrer los enumerados y los cargo en el comboBox correspondiente
         // membresias
         for (Membresia membresia : Membresia.values()) {
-            comboMembresiaMiembro.addItem(membresia.getNombre());
+            comboMembresiaMiembro.addItem(membresia.getIdMembresia()+" - "+membresia.getNombre());
         }
         comboMembresiaMiembro.setSelectedIndex(-1);
 
         // especialidades
         for (Especialidad especialidad : Especialidad.values()) {
-            comboEspecialidadEntrenador.addItem(especialidad.getNombre());
+            comboEspecialidadEntrenador.addItem(especialidad.getIdEspecialidad() + " - "+especialidad.getNombre());
         }
         comboEspecialidadEntrenador.setSelectedIndex(-1);
     }

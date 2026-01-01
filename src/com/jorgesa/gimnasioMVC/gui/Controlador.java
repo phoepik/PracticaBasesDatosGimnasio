@@ -62,7 +62,10 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        switch (command){
 
+        }
     }
 
     @Override

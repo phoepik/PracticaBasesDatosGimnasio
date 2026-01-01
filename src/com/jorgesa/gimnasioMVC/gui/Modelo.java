@@ -1,5 +1,8 @@
 package com.jorgesa.gimnasioMVC.gui;
 
+import com.jorgesa.gimnasioMVC.gui.enums.Especialidad;
+import com.jorgesa.gimnasioMVC.gui.enums.Membresia;
+
 import java.io.*;
 import java.sql.*;
 import java.time.LocalDate;
@@ -35,7 +38,9 @@ public class Modelo {
         try {
             conexion = DriverManager.getConnection(
                     "jdbc:mysql://"+ip+":3306/base_gimnasio",user, password);
-            System.out.println("- Conectado a la base correctamente");
+            System.out.println("- Conectado a la base");
+            cargarMembresias();
+            cargarEspecialidades();
         } catch (SQLException sqle) {
             try {
                 System.out.println("- Error inesperado, volviendo a construir la base");
@@ -52,10 +57,73 @@ public class Modelo {
                 }
                 assert statement != null;
                 statement.close();
-                System.out.println("- Base reconstruida exitosamente");
+
+                cargarMembresias();
+                cargarEspecialidades();
+                System.out.println("- Base reconstruida");
             } catch (SQLException | IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void cargarEspecialidades() {
+        String sentenciaSql = "INSERT INTO especialidades(id_especialidad, nombre, paga_extra, descripcion) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE" +
+                "    nombre = VALUES(nombre)," +
+                "    paga_extra = VALUES(paga_extra)," +
+                "    descripcion = VALUES(descripcion);";
+        PreparedStatement sentencia = null;
+
+        try {
+            for(Especialidad especialidad : Especialidad.values()){
+                sentencia=conexion.prepareStatement(sentenciaSql);
+                sentencia.setInt(1,especialidad.getIdEspecialidad());
+                sentencia.setString(2,especialidad.getNombre());
+                sentencia.setDouble(3,especialidad.getPagaExtra());
+                sentencia.setString(4,especialidad.getDescripcion());
+
+                sentencia.executeUpdate();
+            }
+            System.out.println("- Especialidades insertadas y/o actualizadas");
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    private void cargarMembresias() {
+        String sentenciaSql = "INSERT INTO membresias(id_membresia, nombre, cuota_mensual, descripcion) VALUES (?,?,?,?) ON DUPLICATE KEY UPDATE" +
+                "    nombre = VALUES(nombre)," +
+                "    cuota_mensual = VALUES(cuota_mensual)," +
+                "    descripcion = VALUES(descripcion);";
+        PreparedStatement sentencia = null;
+
+        try {
+            for(Membresia membresia : Membresia.values()){
+                sentencia=conexion.prepareStatement(sentenciaSql);
+                sentencia.setInt(1,membresia.getIdMembresia());
+                sentencia.setString(2,membresia.getNombre());
+                sentencia.setDouble(3,membresia.getCuotaMensual());
+                sentencia.setString(4,membresia.getDescripcion());
+
+                sentencia.executeUpdate();
+            }
+            System.out.println("- Membresias insertadas y/o actualizadas");
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
         }
     }
 
@@ -124,9 +192,11 @@ public class Modelo {
         this.adminPassword = adminPass;
     }
 
-    void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, int idMembresia, int idEntrenador) {
+    void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia, int idEntrenador) {
         String sentenciaSql = "INSERT INTO miembros (nombre, apellido, fecha_nacimiento, dni, telefono, correo, id_membresia, id_entrenador) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement sentencia = null;
+
+        int idMembresia = Integer.parseInt(membresia.split(" - ")[0]);
 
         try {
             sentencia = conexion.prepareStatement(sentenciaSql);
