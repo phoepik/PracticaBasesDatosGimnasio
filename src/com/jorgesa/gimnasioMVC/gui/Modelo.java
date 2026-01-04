@@ -84,7 +84,7 @@ public class Modelo {
 
                 sentencia.executeUpdate();
             }
-            System.out.println("- Especialidades insertadas y/o actualizadas");
+            System.out.println("- Especialidades insertadas y/o actualizadas a la base de datos");
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         } finally {
@@ -114,7 +114,7 @@ public class Modelo {
 
                 sentencia.executeUpdate();
             }
-            System.out.println("- Membresias insertadas y/o actualizadas");
+            System.out.println("- Membresias insertadas y/o actualizadas a la base de datos");
         } catch (SQLException sqle) {
             sqle.printStackTrace();
         } finally {
@@ -270,9 +270,12 @@ public class Modelo {
         }
     }
 
-    void insertarMiembrosClase(int idMiembro, int idClase, LocalDate fechaInscripcion, boolean esNovato) {
+    void insertarMiembrosClase(String miembro, String clase, LocalDate fechaInscripcion, boolean esNovato) {
         String sentenciaSql = "INSERT INTO miembro_clase (id_miembro, id_clase, fecha_inscripcion, novato) VALUES (?, ?, ?, ?)";
         PreparedStatement sentencia = null;
+
+        int idMiembro = Integer.parseInt(miembro.split(" - ")[0]);
+        int idClase = Integer.parseInt(clase.split(" - ")[0]);
 
         try {
             sentencia = conexion.prepareStatement(sentenciaSql);

@@ -6,6 +6,8 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.event.*;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -71,25 +73,83 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
         // miembrosClase
         vista.insertarMiembroClaseButton.addActionListener(listener);
-        vista.insertarMiembroClaseButton.setActionCommand("insertarMiembro");
+        vista.insertarMiembroClaseButton.setActionCommand("insertarMiembroClase");
         vista.modificarMiembroClaseButton.addActionListener(listener);
-        vista.modificarMiembroClaseButton.setActionCommand("modificarMiembro");
+        vista.modificarMiembroClaseButton.setActionCommand("modificarMiembroClase");
         vista.eliminarMiembroClaseButton.addActionListener(listener);
-        vista.eliminarMiembroClaseButton.setActionCommand("eliminarMiembro");
+        vista.eliminarMiembroClaseButton.setActionCommand("eliminarMiembroClase");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         String command = e.getActionCommand();
-        switch (command){
-
+        switch (command) {
+            case "insertarMiembroClase":
+                modelo.insertarMiembrosClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
+                        String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
+                        vista.fechaInscripcionMiembrosClase.getDate(),
+                        vista.checkBoxNovatoMiembrosClase.isSelected());
+                refrescarMiembrosClase();
+                break;
         }
     }
 
     @Override
     public void valueChanged(ListSelectionEvent e) {    // NO METER EL DE ESPECIALIDAD NI MEMBRESIA
         if(!e.getValueIsAdjusting() && !((ListSelectionModel) e.getSource()).isSelectionEmpty()){
+            if(e.getSource().equals(vista.tablaMiembro.getSelectionModel())){
+                int fila = vista.tablaMiembro.getSelectedRow();
+                vista.txtNombreMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 1)));
+                vista.txtApellidoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 2)));
+                vista.txtFechaNacimientoMiembro.setDate(Date.valueOf(String.valueOf(vista.tablaMiembro.getValueAt(fila,3))).toLocalDate());
+                vista.txtDniMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 4)));
+                vista.txtTelefonoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 5)));
+                vista.txtCorreoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 6)));
+                String idMembresia = String.valueOf(vista.tablaMiembro.getValueAt(fila, 7));
+                buscarItemComboBox(vista.comboMembresiaMiembro, idMembresia);
+                String idMiembro = String.valueOf(vista.tablaMiembro.getValueAt(fila,8));
+                buscarItemComboBox(vista.comboEntrenadorMiembro, idMiembro);
+            } else if (e.getSource().equals(vista.tablaEntrenador.getSelectionModel())){
+                int fila = vista.tablaEntrenador.getSelectedRow();
+                vista.txtNombreEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 1)));
+                vista.txtApellidoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 2)));
+                vista.txtDniEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 3)));
+                vista.txtCorreoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 4)));
+                vista.txtTelefonoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 5)));
+                vista.txtSueldoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 6)));
+                String idEspecialidad = String.valueOf(vista.tablaEntrenador.getValueAt(fila,7));
+                buscarItemComboBox(vista.comboEspecialidadEntrenador, idEspecialidad);
+            } else if (e.getSource().equals(vista.tablaClase.getSelectionModel())){
+                int fila = vista.tablaClase.getSelectedRow();
+                vista.txtNombreClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,1)));
+                vista.txtHoraInicioClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,2)));
+                vista.txtDuracionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,3)));
+                vista.txtDescripcionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,4)));
+                String idEntrenador = String.valueOf(vista.tablaClase.getValueAt(fila,5));
+                buscarItemComboBox(vista.comboEntrenadorClase, idEntrenador);
+            } else if (e.getSource().equals(vista.tablaMiembrosClase.getSelectionModel())){
+                int fila = vista.tablaMiembrosClase.getSelectedRow();
+                String idMiembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,0));
+                buscarItemComboBox(vista.comboMiembroMiembrosClase, idMiembro);
+                String idClase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,1));
+                buscarItemComboBox(vista.comboClaseMiembrosClase, idClase);
+                vista.fechaInscripcionMiembrosClase.setDate(Date.valueOf(String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,2))).toLocalDate());
+                vista.checkBoxNovatoMiembrosClase.setSelected((Boolean) vista.tablaMiembrosClase.getValueAt(fila,3));
+            }
+        }
+    }
 
+    private void buscarItemComboBox(JComboBox combobox, String idABuscar){
+        boolean encontrado = false;
+        for(int i = 0; i < combobox.getItemCount();i++){
+            if(((String) combobox.getItemAt(i)).startsWith(idABuscar + " - ")){
+                encontrado = true;
+                combobox.setSelectedIndex(i);
+                break;
+            }
+        }
+        if(!encontrado){
+            combobox.setSelectedIndex(-1);
         }
     }
 
@@ -154,7 +214,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             e.printStackTrace();
         }
     }
-
+    // IMPORTANTE: TENER EN CUENTA QUE EN VISTA TAL VEZ SE PUEDA QUITAR EL METODO Q LO CARGA, SINO QUITAR DESDE AQUI LO RELACIONADO AL COMBOBOX
     private void cargarMembresias() {
         try{
             vista.tablaMembresia.setModel(construirTableModel(modelo.consultarMembresia(), vista.dtmMembresias));
@@ -170,7 +230,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             e.printStackTrace();
         }
     }
-
+    // IMPORTANTE: TENER EN CUENTA QUE EN VISTA TAL VEZ SE PUEDA QUITAR EL METODO Q LO CARGA, SINO QUITAR DESDE AQUI LO RELACIONADO AL COMBOBOX
     private void cargarEspecialidades() {
         try{
             vista.tablaEspecialidad.setModel(construirTableModel(modelo.consultarEspecialidad(), vista.dtmEspecialidades));
@@ -218,26 +278,37 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private void iniciarListas(ListSelectionListener listener) {
         // especialidad
         vista.tablaEspecialidad.setCellSelectionEnabled(true);
+        vista.tablaEspecialidad.setDefaultEditor(Object.class,null);
         vista.tablaEspecialidad.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaEspecialidad.getSelectionModel().addListSelectionListener(listener);
 
         // membresia
         vista.tablaMembresia.setCellSelectionEnabled(true);
+        vista.tablaMembresia.setDefaultEditor(Object.class,null);
         vista.tablaMembresia.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMembresia.getSelectionModel().addListSelectionListener(listener);
 
         // miembro
         vista.tablaMiembro.setCellSelectionEnabled(true);
+        vista.tablaMiembro.setDefaultEditor(Object.class,null);
         vista.tablaMiembro.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMiembro.getSelectionModel().addListSelectionListener(listener);
 
         // entrenador
         vista.tablaEntrenador.setCellSelectionEnabled(true);
+        vista.tablaEntrenador.setDefaultEditor(Object.class,null);
         vista.tablaEntrenador.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaEntrenador.getSelectionModel().addListSelectionListener(listener);
 
+        // clase
+        vista.tablaClase.setCellSelectionEnabled(true);
+        vista.tablaClase.setDefaultEditor(Object.class,null);
+        vista.tablaClase.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaClase.getSelectionModel().addListSelectionListener(listener);
+
         // miembro_clase
         vista.tablaMiembrosClase.setCellSelectionEnabled(true);
+        vista.tablaMiembrosClase.setDefaultEditor(Object.class,null);
         vista.tablaMiembrosClase.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMiembrosClase.getSelectionModel().addListSelectionListener(listener);
 
