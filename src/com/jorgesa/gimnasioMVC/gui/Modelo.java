@@ -496,12 +496,13 @@ public class Modelo {
     ResultSet consultarMiembro(){
         String sentenciaSql = "SELECT id_miembro AS ID, " +
                 "nombre AS Nombre, " +
-                "fecha_nacimiento AS Fecha Nacimiento, "+
+                "apellido AS Apellido, "+
+                "fecha_nacimiento AS FechaNacimiento, "+
                 "dni AS DNI, " +
                 "telefono AS Telefono, " +
                 "correo AS Correo, " +
                 "id_membresia AS Membresia, " +
-                "id_entrenador AS Entrenador" +
+                "id_entrenador AS Entrenador " +
                 "FROM miembros";
         PreparedStatement sentencia;
         ResultSet resultado;
@@ -523,7 +524,7 @@ public class Modelo {
                 "correo AS Correo, " +
                 "telefono AS Telefono, " +
                 "sueldo AS Sueldo, " +
-                "id_especialidad AS Especialidad" +
+                "id_especialidad AS Especialidad " +
                 "FROM entrenadores";
         PreparedStatement sentencia;
         ResultSet resultado;
@@ -540,10 +541,10 @@ public class Modelo {
     ResultSet consultarClase(){
         String sentenciaSql = "SELECT id_clase AS ID, " +
                 "nombre AS Nombre, " +
-                "hora_inicio AS Hora Inicio, "+
+                "hora_inicio AS HoraInicio, "+
                 "duracion_minutos AS 'Duracion(min)', " +
                 "descripcion AS Descripcion, " +
-                "id_entrenador AS Entrenador, " +
+                "id_entrenador AS Entrenador " +
                 "FROM clases";
         PreparedStatement sentencia;
         ResultSet resultado;
@@ -561,7 +562,7 @@ public class Modelo {
         String sentenciaSql = "SELECT id_miembro AS Miembro, " +
                 "id_clase AS Clase, " +
                 "fecha_inscripcion AS Inscripcion, "+
-                "novato AS 'Es novato', " +
+                "novato AS 'Es novato' " +
                 "FROM miembro_clase";
         PreparedStatement sentencia;
         ResultSet resultado;

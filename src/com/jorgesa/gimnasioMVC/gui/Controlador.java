@@ -1,7 +1,9 @@
 package com.jorgesa.gimnasioMVC.gui;
 
+import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.awt.event.*;
 import java.sql.ResultSet;
@@ -13,7 +15,6 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     private Modelo modelo;
     private Vista vista;
-    boolean refrescar;
 
     public Controlador(Modelo modelo, Vista vista){
         this.modelo = modelo;
@@ -21,91 +22,19 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         modelo.conectar();
         addActionListeners(this);
         addWindowListeners(this);
-        refrescarTodo();
+        iniciarListas(this);
+        cargarTodo();
     }
 
-    private void refrescarTodo() {
-        refrescarEspecialidades();  // no es necesario ya q especialidades nunca cambia
-        refrescarMembresias();  // no es necesario ya q membresias nunca cambia
+    private void cargarTodo() {
+        cargarEspecialidades();
+        cargarMembresias();
+        refrescarMiembros();
+        refrescarEntrenadores();
+        refrescarClases();
+        refrescarMiembrosClase();
     }
 
-    private void refrescarMembresias() {
-        try{
-            vista.tablaMembresia.setModel(construirTableModelMembresias(modelo.consultarMembresia()));
-            vista.comboMembresiaMiembro.removeAllItems();
-            for(int i = 0; i< vista.dtmMembresias.getRowCount();i++){
-                vista.comboMembresiaMiembro.addItem(vista.dtmMembresias.getValueAt(i,0)+" - "+
-                        vista.dtmMembresias.getValueAt(i,1));
-            }
-            vista.comboMembresiaMiembro.setSelectedIndex(-1);
-            System.out.println("- Tabla membresias refrescada" +
-                    " - Combo membresias refrescado");
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    private TableModel construirTableModelMembresias(ResultSet rs) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-
-        // nombres de las columnas
-        Vector<String> nombresColumnas = new Vector<>();
-        int numColumnas = metaData.getColumnCount();
-        for (int columna = 1; columna <= numColumnas; columna++){
-            nombresColumnas.add(metaData.getColumnLabel(columna));
-        }
-
-        // datos de la tabla
-        Vector<Vector<Object>> data = new Vector<>();
-        setDataVector(rs,numColumnas,data);
-
-        vista.dtmMembresias.setDataVector(data,nombresColumnas);
-        return vista.dtmMembresias;
-    }
-
-    private void refrescarEspecialidades() {
-        try{
-            vista.tablaEspecialidad.setModel(construirTableModelEspecialidades(modelo.consultarEspecialidad()));
-            vista.comboEspecialidadEntrenador.removeAllItems();
-            for(int i = 0; i< vista.dtmEspecialidades.getRowCount();i++){
-                vista.comboEspecialidadEntrenador.addItem(vista.dtmEspecialidades.getValueAt(i,0)+" - "+
-                vista.dtmEspecialidades.getValueAt(i,1));
-            }
-            vista.comboEspecialidadEntrenador.setSelectedIndex(-1);
-            System.out.println("- Tabla especialidades refrescada" +
-                    " - Combo especialidades refrescado");
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    private TableModel construirTableModelEspecialidades(ResultSet rs) throws SQLException {
-        ResultSetMetaData metaData = rs.getMetaData();
-
-        // nombres de las columnas
-        Vector<String> nombresColumnas = new Vector<>();
-        int numColumnas = metaData.getColumnCount();
-        for (int columna = 1; columna <= numColumnas; columna++){
-            nombresColumnas.add(metaData.getColumnLabel(columna));
-        }
-
-        // datos de la tabla
-        Vector<Vector<Object>> data = new Vector<>();
-        setDataVector(rs,numColumnas,data);
-
-        vista.dtmEspecialidades.setDataVector(data,nombresColumnas);
-        return vista.dtmEspecialidades;
-    }
-
-    private void setDataVector(ResultSet rs, int columnCount, Vector<Vector<Object>> data) throws SQLException {
-        while (rs.next()) {
-            Vector<Object> vector = new Vector<>();
-            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-                vector.add(rs.getObject(columnIndex));
-            }
-            data.add(vector);
-        }
-    }
 
     private void addActionListeners(ActionListener listener){
         // miembros
@@ -158,49 +87,164 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     }
 
     @Override
-    public void itemStateChanged(ItemEvent e) {
+    public void valueChanged(ListSelectionEvent e) {    // NO METER EL DE ESPECIALIDAD NI MEMBRESIA
+        if(!e.getValueIsAdjusting() && !((ListSelectionModel) e.getSource()).isSelectionEmpty()){
 
+        }
     }
 
-    @Override
-    public void windowOpened(WindowEvent e) {
-
+    private void refrescarMiembrosClase() {
+        try{
+            vista.tablaMiembrosClase.setModel(construirTableModel(modelo.consultarMiembroClase(),vista.dtmMiembrosClases));
+            System.out.println("- Tabla miembrosClase refrescada");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-
-
-    @Override
-    public void windowClosed(WindowEvent e) {
-
+    private void refrescarClases() {
+        try{
+            vista.tablaClase.setModel(construirTableModel(modelo.consultarClase(), vista.dtmClases));
+            vista.comboClaseMiembrosClase.removeAllItems();
+            vista.comboClaseMiembrosClase.removeAllItems();
+            for(int i = 0; i< vista.dtmClases.getRowCount();i++){
+                vista.comboClaseMiembrosClase.addItem(vista.dtmClases.getValueAt(i,0)+" - "+
+                        vista.dtmClases.getValueAt(i,1));
+            }
+            vista.comboClaseMiembrosClase.setSelectedIndex(-1);
+            System.out.println("- Tabla clases refrescada" +
+                    " - Combo clases(en miembros y clases) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void windowIconified(WindowEvent e) {
-
+    private void refrescarEntrenadores() {
+        try{
+            vista.tablaEntrenador.setModel(construirTableModel(modelo.consultarEntrenador(), vista.dtmEntrenadores));
+            vista.comboEntrenadorMiembro.removeAllItems();
+            vista.comboEntrenadorClase.removeAllItems();
+            for(int i = 0; i< vista.dtmEntrenadores.getRowCount();i++){
+                vista.comboEntrenadorMiembro.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
+                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
+                vista.comboEntrenadorClase.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
+                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
+            }
+            vista.comboEntrenadorMiembro.setSelectedIndex(-1);
+            vista.comboEntrenadorClase.setSelectedIndex(-1);
+            System.out.println("- Tabla entrenadores refrescada" +
+                    " - Combo entrenador(en miembros y clases) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void windowDeiconified(WindowEvent e) {
-
+    private void refrescarMiembros() {
+        try{
+            vista.tablaMiembro.setModel(construirTableModel(modelo.consultarMiembro(), vista.dtmMiembros));
+            vista.comboMiembroMiembrosClase.removeAllItems();
+            for(int i = 0; i< vista.dtmMiembros.getRowCount();i++){
+                vista.comboMiembroMiembrosClase.addItem(vista.dtmMiembros.getValueAt(i,0)+" - "+
+                        vista.dtmMiembros.getValueAt(i,2)+", " + vista.dtmMiembros.getValueAt(i, 1));
+            }
+            vista.comboMiembroMiembrosClase.setSelectedIndex(-1);
+            System.out.println("- Tabla miembros refrescada" +
+                    " - Combo miembro(en miembrosClase) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void windowActivated(WindowEvent e) {
-
+    private void cargarMembresias() {
+        try{
+            vista.tablaMembresia.setModel(construirTableModel(modelo.consultarMembresia(), vista.dtmMembresias));
+            vista.comboMembresiaMiembro.removeAllItems();
+            for(int i = 0; i< vista.dtmMembresias.getRowCount();i++){
+                vista.comboMembresiaMiembro.addItem(vista.dtmMembresias.getValueAt(i,0)+" - "+
+                        vista.dtmMembresias.getValueAt(i,1));
+            }
+            vista.comboMembresiaMiembro.setSelectedIndex(-1);
+            System.out.println("- Tabla membresias refrescada" +
+                    " - Combo membresia(en miembros) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void windowDeactivated(WindowEvent e) {
-
+    private void cargarEspecialidades() {
+        try{
+            vista.tablaEspecialidad.setModel(construirTableModel(modelo.consultarEspecialidad(), vista.dtmEspecialidades));
+            vista.comboEspecialidadEntrenador.removeAllItems();
+            for(int i = 0; i< vista.dtmEspecialidades.getRowCount();i++){
+                vista.comboEspecialidadEntrenador.addItem(vista.dtmEspecialidades.getValueAt(i,0)+" - "+
+                        vista.dtmEspecialidades.getValueAt(i,1));
+            }
+            vista.comboEspecialidadEntrenador.setSelectedIndex(-1);
+            System.out.println("- Tabla especialidades refrescada" +
+                    " - Combo especialidad(en entrenadores) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
     }
 
-    @Override
-    public void valueChanged(ListSelectionEvent e) {
+    private TableModel construirTableModel(ResultSet rs, DefaultTableModel modelo) throws SQLException {
+        ResultSetMetaData metaData = rs.getMetaData();
 
+        // nombres de las columnas
+        Vector<String> nombresColumnas = new Vector<>();
+        int numColumnas = metaData.getColumnCount();
+        for (int columna = 1; columna <= numColumnas; columna++){
+            nombresColumnas.add(metaData.getColumnLabel(columna));
+        }
+
+        // datos de la tabla
+        Vector<Vector<Object>> data = new Vector<>();
+        setDataVector(rs,numColumnas,data);
+
+        modelo.setDataVector(data,nombresColumnas);
+        return modelo;
+    }
+
+    private void setDataVector(ResultSet rs, int columnCount, Vector<Vector<Object>> data) throws SQLException {
+        while (rs.next()) {
+            Vector<Object> vector = new Vector<>();
+            for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+                vector.add(rs.getObject(columnIndex));
+            }
+            data.add(vector);
+        }
+    }
+
+    private void iniciarListas(ListSelectionListener listener) {
+        // especialidad
+        vista.tablaEspecialidad.setCellSelectionEnabled(true);
+        vista.tablaEspecialidad.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaEspecialidad.getSelectionModel().addListSelectionListener(listener);
+
+        // membresia
+        vista.tablaMembresia.setCellSelectionEnabled(true);
+        vista.tablaMembresia.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaMembresia.getSelectionModel().addListSelectionListener(listener);
+
+        // miembro
+        vista.tablaMiembro.setCellSelectionEnabled(true);
+        vista.tablaMiembro.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaMiembro.getSelectionModel().addListSelectionListener(listener);
+
+        // entrenador
+        vista.tablaEntrenador.setCellSelectionEnabled(true);
+        vista.tablaEntrenador.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaEntrenador.getSelectionModel().addListSelectionListener(listener);
+
+        // miembro_clase
+        vista.tablaMiembrosClase.setCellSelectionEnabled(true);
+        vista.tablaMiembrosClase.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        vista.tablaMiembrosClase.getSelectionModel().addListSelectionListener(listener);
+
+        System.out.println("- Listeners de tablas inicializados");
     }
 
     // ventana
-
     private void addWindowListeners(WindowListener listener){
         vista.addWindowListener(listener);
     }
@@ -209,5 +253,39 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     public void windowClosing(WindowEvent e) {
         System.exit(0);
         System.out.println("- Salida exitosa del programa");
+    }
+
+    /*LISTENERS IMPLEMENTADOS NO UTILIZADOS*/
+
+    private void addItemListeners(Controlador controlador) {
+    }
+
+    @Override
+    public void windowOpened(WindowEvent e) {
+    }
+
+    @Override
+    public void windowClosed(WindowEvent e) {
+    }
+
+    @Override
+    public void windowIconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeiconified(WindowEvent e) {
+    }
+
+    @Override
+    public void windowActivated(WindowEvent e) {
+    }
+
+    @Override
+    public void windowDeactivated(WindowEvent e) {
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+
     }
 }
