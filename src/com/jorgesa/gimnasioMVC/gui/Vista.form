@@ -44,6 +44,8 @@
             <colspec value="fill:d:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
             <constraints>
               <tabbedpane title="Miembros"/>
             </constraints>
@@ -230,6 +232,15 @@
                   </component>
                 </children>
               </scrollpane>
+              <component id="1a104" class="javax.swing.JButton" binding="borrarEntrenadorMiembroButton">
+                <constraints>
+                  <grid row="14" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Borrar"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="90e6c" binding="JPanelEntrenadores" layout-manager="FormLayout">
@@ -257,6 +268,8 @@
             <colspec value="fill:d:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:d:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
             <constraints>
               <tabbedpane title="Entrenadores"/>
             </constraints>
@@ -426,6 +439,15 @@
                 </constraints>
                 <properties>
                   <text value="Eliminar"/>
+                </properties>
+              </component>
+              <component id="65d9f" class="javax.swing.JButton" binding="borrarEspecialidadEntrenadorButton">
+                <constraints>
+                  <grid row="12" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Borrar"/>
                 </properties>
               </component>
             </children>

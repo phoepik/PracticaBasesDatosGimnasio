@@ -192,8 +192,38 @@ public class Modelo {
         this.adminPassword = adminPass;
     }
 
-    void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia, int idEntrenador) {
+    void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia, String entrenador) {
         String sentenciaSql = "INSERT INTO miembros (nombre, apellido, fecha_nacimiento, dni, telefono, correo, id_membresia, id_entrenador) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement sentencia = null;
+
+        int idMembresia = Integer.parseInt(membresia.split(" - ")[0]);
+        int idEntrenador = Integer.parseInt(entrenador.split(" - ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setString(2, apellido);
+            sentencia.setDate(3, Date.valueOf(fechaNacimiento));
+            sentencia.setString(4, dni);
+            sentencia.setString(5,telefono);
+            sentencia.setString(6, correo);
+            sentencia.setInt(7,idMembresia);
+            sentencia.setInt(8,idEntrenador);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void insertarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia) {
+        String sentenciaSql = "INSERT INTO miembros (nombre, apellido, fecha_nacimiento, dni, telefono, correo, id_membresia) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement sentencia = null;
 
         int idMembresia = Integer.parseInt(membresia.split(" - ")[0]);
@@ -207,7 +237,6 @@ public class Modelo {
             sentencia.setString(5,telefono);
             sentencia.setString(6, correo);
             sentencia.setInt(7,idMembresia);
-            sentencia.setInt(8,idEntrenador);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -296,7 +325,7 @@ public class Modelo {
         }
     }
 
-    void modificarMiembro(String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia, String entrenador, int idMiembro) {
+    void modificarMiembro(int idMiembro, String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia, String entrenador) {
 
         String sentenciaSql = "UPDATE miembros SET nombre = ?, apellido = ?, fecha_nacimiento = ?, dni = ?, " +
                 "telefono = ?, correo = ?, id_membresia= ?, id_entrenador= ? WHERE id_miembro = ?";
@@ -315,6 +344,38 @@ public class Modelo {
             sentencia.setString(6, correo);
             sentencia.setInt(7, idMembresia);
             sentencia.setInt(8, idEntrenador);
+            sentencia.setInt(9, idMiembro);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void modificarMiembro(int idMiembro, String nombre, String apellido, LocalDate fechaNacimiento, String dni,String telefono, String correo, String membresia) {
+
+        String sentenciaSql = "UPDATE miembros SET nombre = ?, apellido = ?, fecha_nacimiento = ?, dni = ?, " +
+                "telefono = ?, correo = ?, id_membresia= ?, id_entrenador= ? WHERE id_miembro = ?";
+        PreparedStatement sentencia = null;
+
+        int idMembresia = Integer.valueOf(membresia.split(" - ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setString(2, apellido);
+            sentencia.setDate(3, Date.valueOf(fechaNacimiento));
+            sentencia.setString(4, dni);
+            sentencia.setString(5, telefono);
+            sentencia.setString(6, correo);
+            sentencia.setInt(7, idMembresia);
+            sentencia.setNull(8,Types.INTEGER);
             sentencia.setInt(9, idMiembro);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {

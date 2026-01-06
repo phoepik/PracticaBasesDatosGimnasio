@@ -74,6 +74,8 @@ public class Vista extends JFrame {
     JButton insertarMiembroClaseButton;
     JButton modificarMiembroClaseButton;
     JButton eliminarMiembroClaseButton;
+    JButton borrarEntrenadorMiembroButton;
+    JButton borrarEspecialidadEntrenadorButton;
 
 
     // Default table model
@@ -100,7 +102,7 @@ public class Vista extends JFrame {
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         this.pack();
         //doy dimension
-        this.setSize(new Dimension(this.getWidth() + 100, this.getHeight()));
+        this.setSize(new Dimension(this.getWidth() + 200, this.getHeight()));
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         //llamo menu
