@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS miembros (
     id_membresia INT NOT NULL,
     id_entrenador INT,
     FOREIGN KEY (id_membresia) REFERENCES membresias(id_membresia),
-    FOREIGN KEY (id_entrenador) REFERENCES entrenadores(id_entrenador)
+    FOREIGN KEY (id_entrenador) REFERENCES entrenadores(id_entrenador) ON DELETE SET NULL
 );
 --
 CREATE TABLE IF NOT EXISTS clases (

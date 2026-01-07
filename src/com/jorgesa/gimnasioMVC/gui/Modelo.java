@@ -250,9 +250,11 @@ public class Modelo {
         }
     }
 
-    void insertarEntrenador(String nombre, String apellido, String dni,String correo,String telefono, int idEspecialidad) {
-        String sentenciaSql = "INSERT INTO entrenadores (nombre, apellido, dni, correo, telefono, id_especialidad) VALUES (?, ?, ?, ?, ?, ?)";
+    void insertarEntrenador(String nombre, String apellido, String dni,String correo,String telefono,Double sueldo, String especialidad) {
+        String sentenciaSql = "INSERT INTO entrenadores (nombre, apellido, dni, correo, telefono, sueldo, id_especialidad) VALUES (?, ?, ?, ?, ?, ?, ?)";
         PreparedStatement sentencia = null;
+
+        int idEspecialidad = Integer.parseInt(especialidad.split(" - ")[0]);
 
         try {
             sentencia = conexion.prepareStatement(sentenciaSql);
@@ -261,7 +263,34 @@ public class Modelo {
             sentencia.setString(3,dni);
             sentencia.setString(4, correo);
             sentencia.setString(5,telefono);
-            sentencia.setInt(6, idEspecialidad);
+            sentencia.setDouble(6, sueldo);
+            sentencia.setInt(7,idEspecialidad);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void insertarEntrenador(String nombre, String apellido, String dni,String correo,String telefono,Double sueldo) {
+        String sentenciaSql = "INSERT INTO entrenadores (nombre, apellido, dni, correo, telefono, sueldo) VALUES (?, ?, ?, ?, ?, ?)";
+        PreparedStatement sentencia = null;
+
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setString(2, apellido);
+            sentencia.setString(3,dni);
+            sentencia.setString(4, correo);
+            sentencia.setString(5,telefono);
+            sentencia.setDouble(6, sueldo);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();
@@ -390,10 +419,10 @@ public class Modelo {
         }
     }
 
-    void modificarEntrenador(String nombre, String apellido, String dni,String correo,String telefono, String especialidad, int idEntrenador) {
+    void modificarEntrenador(int idEntrenador, String nombre, String apellido, String dni,String correo,String telefono,Double sueldo, String especialidad) {
 
         String sentenciaSql = "UPDATE entrenadores SET nombre = ?, apellido = ?, dni = ?, correo = ?, " +
-                "telefono = ?, id_especialidad = ? WHERE id_entrenador = ?";
+                "telefono = ?,sueldo = ?, id_especialidad = ? WHERE id_entrenador = ?";
         PreparedStatement sentencia = null;
 
         int idEspecialidad = Integer.valueOf(especialidad.split(" - ")[0]);
@@ -405,8 +434,38 @@ public class Modelo {
             sentencia.setString(3, dni);
             sentencia.setString(4,correo);
             sentencia.setString(5, telefono);
-            sentencia.setInt(6, idEspecialidad);
-            sentencia.setInt(7, idEntrenador);
+            sentencia.setDouble(6,sueldo);
+            sentencia.setInt(7, idEspecialidad);
+            sentencia.setInt(8, idEntrenador);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void modificarEntrenador(int idEntrenador, String nombre, String apellido, String dni,String correo,String telefono,Double sueldo) {
+
+        String sentenciaSql = "UPDATE entrenadores SET nombre = ?, apellido = ?, dni = ?, correo = ?, " +
+                "telefono = ?,sueldo = ?, id_especialidad = ? WHERE id_entrenador = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setString(2, apellido);
+            sentencia.setString(3, dni);
+            sentencia.setString(4,correo);
+            sentencia.setString(5, telefono);
+            sentencia.setDouble(6,sueldo);
+            sentencia.setNull(7,Types.INTEGER);
+            sentencia.setInt(8, idEntrenador);
             sentencia.executeUpdate();
         } catch (SQLException sqle) {
             sqle.printStackTrace();

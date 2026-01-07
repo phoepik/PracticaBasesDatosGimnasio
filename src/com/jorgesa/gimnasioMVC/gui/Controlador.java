@@ -55,7 +55,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 }
                 break;
 
-            case "eliminarMiembro":
+            case "eliminarMiembro":     // PENDIENTE: tener en cuenta q puede estar asociado a claseMiembro
                     if(hayCeldaMiembroSeleccionada()){
                         int fila = vista.tablaMiembro.getSelectedRow();
                         int id = (int) vista.tablaMiembro.getValueAt(fila,0);
@@ -71,6 +71,36 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             // ENTRENADOR
             case "borrarEspecialidadEntrenador":
                 vista.comboEspecialidadEntrenador.setSelectedItem(null);
+                break;
+
+            case "insertarEntrenador":
+                if(!hayCamposVaciosEntrenador()){
+                    insertarEntrenador();
+                    refrescarEntrenadores();
+                    System.out.println("- ENTRENADOR INSERTADO");
+                }
+                break;
+
+            case "modificarEntrenador":
+                if(hayCeldaEntrenadorSeleccionada() && !hayCamposVaciosEntrenador()){
+                    modificarEntrenador();
+                    refrescarEntrenadores();
+                    System.out.println("- ENTRENADOR MODIFICADO");
+                }
+                break;
+
+            case "eliminarEntrenador":
+                if(hayCeldaEntrenadorSeleccionada()){
+                    int fila = vista.tablaEntrenador.getSelectedRow();
+                    int id = (int) vista.tablaEntrenador.getValueAt(fila,0);
+                    String nombre = (String) vista.tablaEntrenador.getValueAt(fila,1);
+                    if(Util.mostrarMensajePregunta("Eliminar entrenador: "+id+ " - "+nombre)){
+                        modelo.eliminarEntrenador(id);
+                        refrescarEntrenadores();
+                        System.out.println("- ENTRENADOR ELIMINADO");
+                        refrescarMiembros();    // por si acaso tenia algun miembro asociado al entrenador borrado
+                    }
+                }
                 break;
 
             case "insertarMiembroClase":    // no acabado, pero funcional
@@ -277,6 +307,102 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                     vista.txtTelefonoMiembro.getText(),
                     vista.txtCorreoMiembro.getText(),
                     String.valueOf(vista.comboMembresiaMiembro.getSelectedItem()));
+        }
+    }
+
+    // ENTRENADOR
+    private boolean hayCamposVaciosEntrenador(){
+        ArrayList<String> camposVacios = new ArrayList<>();
+        boolean hayCamposVacios = false;
+        if (vista.txtNombreEntrenador.getText().isEmpty()) {
+            camposVacios.add("nombre");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtApellidoEntrenador.getText().isEmpty()) {
+            camposVacios.add("apellido");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtDniEntrenador.getText().isEmpty()) {
+            camposVacios.add("dni");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtCorreoEntrenador.getText().isEmpty()) {
+            camposVacios.add("correo");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtTelefonoEntrenador.getText().isEmpty()) {
+            camposVacios.add("telefono");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtSueldoEntrenador.getText().isEmpty()) {
+            camposVacios.add("sueldo");
+            hayCamposVacios = true;
+        }
+
+        if (hayCamposVacios){
+            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+            Util.mostrarMensajeError(mensaje);
+            return true;
+        }
+        return false;
+    }
+
+    private void insertarEntrenador(){
+        if(vista.comboEspecialidadEntrenador.getSelectedItem()!=null){
+            modelo.insertarEntrenador(vista.txtNombreEntrenador.getText(),
+                    vista.txtApellidoEntrenador.getText(),
+                    vista.txtDniEntrenador.getText(),
+                    vista.txtCorreoEntrenador.getText(),
+                    vista.txtTelefonoEntrenador.getText(),
+                    Double.valueOf(vista.txtSueldoEntrenador.getText()),    // no está controlado q meta un numero
+                    String.valueOf(vista.comboEspecialidadEntrenador.getSelectedItem()));
+        } else {
+            modelo.insertarEntrenador(vista.txtNombreEntrenador.getText(),
+                    vista.txtApellidoEntrenador.getText(),
+                    vista.txtDniEntrenador.getText(),
+                    vista.txtCorreoEntrenador.getText(),
+                    vista.txtTelefonoEntrenador.getText(),
+                    Double.valueOf(vista.txtSueldoEntrenador.getText()));    // no está controlado q meta un numero;
+        }
+    }
+
+    private boolean hayCeldaEntrenadorSeleccionada(){
+        int fila = vista.tablaEntrenador.getSelectedRow();
+        if(fila!=-1){
+            return true;
+        }
+        Util.mostrarMensajeError("No has seleccionado ningun entrenador en la tabla");
+        return false;
+    }
+
+    private void modificarEntrenador(){
+        int fila = vista.tablaEntrenador.getSelectedRow();
+        int idEntrenador = (int) vista.tablaEntrenador.getValueAt(fila, 0);
+
+        if(vista.comboEspecialidadEntrenador.getSelectedItem()!=null){
+            modelo.modificarEntrenador(idEntrenador,
+                    vista.txtNombreEntrenador.getText(),
+                    vista.txtApellidoEntrenador.getText(),
+                    vista.txtDniEntrenador.getText(),
+                    vista.txtCorreoEntrenador.getText(),
+                    vista.txtTelefonoEntrenador.getText(),
+                    Double.valueOf(vista.txtSueldoEntrenador.getText()),    // no está controlado q meta un numero
+                    String.valueOf(vista.comboEspecialidadEntrenador.getSelectedItem())
+            );
+        } else {
+            modelo.modificarEntrenador(idEntrenador,
+                    vista.txtNombreEntrenador.getText(),
+                    vista.txtApellidoEntrenador.getText(),
+                    vista.txtDniEntrenador.getText(),
+                    vista.txtCorreoEntrenador.getText(),
+                    vista.txtTelefonoEntrenador.getText(),
+                    Double.valueOf(vista.txtSueldoEntrenador.getText())    // no está controlado q meta un numero
+            );
         }
     }
 

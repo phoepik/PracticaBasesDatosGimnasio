@@ -122,7 +122,7 @@
                 </constraints>
                 <properties>
                   <text value="Entrenador"/>
-                  <toolTipText value="Puede tener o no tener entrenador"/>
+                  <toolTipText value="Campo no obligatorio"/>
                 </properties>
               </component>
               <component id="4d06e" class="javax.swing.JTextField" binding="txtNombreMiembro">
@@ -189,7 +189,9 @@
                   <grid row="14" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="Campo no obligatorio"/>
+                </properties>
               </component>
               <component id="24aa" class="javax.swing.JButton" binding="insertarMiembroButton">
                 <constraints>
@@ -382,6 +384,7 @@
                 </constraints>
                 <properties>
                   <text value="Especialidad"/>
+                  <toolTipText value="Campo no obligatorio"/>
                 </properties>
               </component>
               <component id="85f47" class="javax.swing.JComboBox" binding="comboEspecialidadEntrenador">
@@ -389,7 +392,9 @@
                   <grid row="12" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="Campo no obligatorio"/>
+                </properties>
               </component>
               <component id="e003b" class="javax.swing.JTextField" binding="txtSueldoEntrenador">
                 <constraints>
