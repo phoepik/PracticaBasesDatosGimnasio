@@ -2,6 +2,7 @@ package com.jorgesa.gimnasioMVC.gui;
 
 import com.jorgesa.gimnasioMVC.gui.enums.Especialidad;
 import com.jorgesa.gimnasioMVC.gui.enums.Membresia;
+import jdk.nashorn.internal.codegen.types.Type;
 
 import java.io.*;
 import java.sql.*;
@@ -304,9 +305,11 @@ public class Modelo {
         }
     }
 
-    void insertarClase(String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion, int idEntrenador) {
+    void insertarClase(String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion, String entrenador) {
         String sentenciaSql = "INSERT INTO clases (nombre, hora_inicio, duracion_minutos, descripcion, id_entrenador) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement sentencia = null;
+
+        int idEntrenador = Integer.parseInt(entrenador.split(" - ")[0]);
 
         try {
             sentencia = conexion.prepareStatement(sentenciaSql);
@@ -327,6 +330,81 @@ public class Modelo {
                 }
         }
     }
+
+    void insertarClaseSinEntrenador(String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion) {
+        String sentenciaSql = "INSERT INTO clases (nombre, hora_inicio, duracion_minutos, descripcion, id_entrenador) VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3,duracionMinutos);
+            sentencia.setString(4, descripcion);
+            sentencia.setNull(5, Types.INTEGER);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void insertarClaseSinDescripcion(String nombre, LocalTime horaInicio, int duracionMinutos, String entrenador) {
+        String sentenciaSql = "INSERT INTO clases (nombre, hora_inicio, duracion_minutos,descripcion,  id_entrenador) VALUES (?, ?, ?,?, ?)";
+        PreparedStatement sentencia = null;
+
+        int idEntrenador = Integer.parseInt(entrenador.split(" - ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3,duracionMinutos);
+            sentencia.setNull(4, Types.VARCHAR);
+            sentencia.setInt(5,idEntrenador);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void insertarClaseSinDescripcionNiEntrenador(String nombre, LocalTime horaInicio, int duracionMinutos) {
+        String sentenciaSql = "INSERT INTO clases (nombre, hora_inicio, duracion_minutos,descripcion,  id_entrenador) VALUES (?, ?, ?,?, ?)";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3,duracionMinutos);
+            sentencia.setNull(4, Types.VARCHAR);
+            sentencia.setNull(5,Types.INTEGER);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
 
     void insertarMiembrosClase(String miembro, String clase, LocalDate fechaInscripcion, boolean esNovato) {
         String sentenciaSql = "INSERT INTO miembro_clase (id_miembro, id_clase, fecha_inscripcion, novato) VALUES (?, ?, ?, ?)";
@@ -479,7 +557,7 @@ public class Modelo {
         }
     }
 
-    void modificarClase(String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion, String entrenador, int idClase) {
+    void modificarClase(int idClase, String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion, String entrenador) {
 
         String sentenciaSql = "UPDATE clases SET nombre = ?, hora_inicio = ?, duracion_minutos = ?, descripcion = ?, " +
                 " id_entrenador = ? WHERE id_clase = ?";
@@ -507,6 +585,90 @@ public class Modelo {
                 }
         }
     }
+
+    void modificarClaseSinEntrenador(int idClase, String nombre, LocalTime horaInicio, int duracionMinutos, String descripcion) {
+
+        String sentenciaSql = "UPDATE clases SET nombre = ?, hora_inicio = ?, duracion_minutos = ?, descripcion = ?, " +
+                " id_entrenador = ? WHERE id_clase = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3, duracionMinutos);
+            sentencia.setString(4,descripcion);
+            sentencia.setNull(5, Types.INTEGER);
+            sentencia.setInt(6, idClase);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void modificarClaseSinDescripcion(int idClase, String nombre, LocalTime horaInicio, int duracionMinutos, String entrenador) {
+
+        String sentenciaSql = "UPDATE clases SET nombre = ?, hora_inicio = ?, duracion_minutos = ?, descripcion = ?, " +
+                " id_entrenador = ? WHERE id_clase = ?";
+        PreparedStatement sentencia = null;
+
+        int idEntrenador = Integer.valueOf(entrenador.split(" - ")[0]);
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3, duracionMinutos);
+            sentencia.setNull(4,Types.VARCHAR);
+            sentencia.setInt(5, idEntrenador);
+            sentencia.setInt(6, idClase);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
+    void modificarClaseSinDescripcionNiEntrenador(int idClase, String nombre, LocalTime horaInicio, int duracionMinutos) {
+
+        String sentenciaSql = "UPDATE clases SET nombre = ?, hora_inicio = ?, duracion_minutos = ?, descripcion = ?, " +
+                " id_entrenador = ? WHERE id_clase = ?";
+        PreparedStatement sentencia = null;
+
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            sentencia.setString(1, nombre);
+            sentencia.setTime(2, Time.valueOf(horaInicio));
+            sentencia.setInt(3, duracionMinutos);
+            sentencia.setNull(4,Types.VARCHAR);
+            sentencia.setNull(5, Types.INTEGER);
+            sentencia.setInt(6, idClase);
+            sentencia.executeUpdate();
+        } catch (SQLException sqle) {
+            sqle.printStackTrace();
+        } finally {
+            if (sentencia != null)
+                try {
+                    sentencia.close();
+                } catch (SQLException sqle) {
+                    sqle.printStackTrace();
+                }
+        }
+    }
+
 
     void modificarMiembroClase(String miembro, String clase, LocalDate fechaInscripcion, boolean esNovato){
         String sentenciaSql ="UPDATE miembro_clase SET fecha_inscripcion = ?, novato = ? " +
@@ -698,7 +860,6 @@ public class Modelo {
         }
         return null;
     }
-
 
     ResultSet consultarEspecialidad() {
         String sentenciaSql = "SELECT id_especialidad AS ID, " +

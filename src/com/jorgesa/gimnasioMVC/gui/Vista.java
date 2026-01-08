@@ -76,6 +76,7 @@ public class Vista extends JFrame {
     JButton eliminarMiembroClaseButton;
     JButton borrarEntrenadorMiembroButton;
     JButton borrarEspecialidadEntrenadorButton;
+    JButton borrarEntrenadorClaseButton;
 
 
     // Default table model

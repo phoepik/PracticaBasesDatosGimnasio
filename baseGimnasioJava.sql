@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS entrenadores (
     dni VARCHAR(150) UNIQUE NOT NULL,
     correo VARCHAR(150) NOT NULL,
     telefono VARCHAR(150) NOT NULL,
-    sueldo DECIMAL NOT NULL,
+    sueldo DECIMAL(9,2) NOT NULL,
     id_especialidad INT,
     FOREIGN KEY (id_especialidad) references especialidades(id_especialidad)
 );
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS miembros (
 --
 CREATE TABLE IF NOT EXISTS clases (
     id_clase INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(150) NOT NULL,
+    nombre VARCHAR(150) UNIQUE NOT NULL,
     hora_inicio TIME NOT NULL,
     duracion_minutos INT NOT NULL,
     descripcion VARCHAR(200),

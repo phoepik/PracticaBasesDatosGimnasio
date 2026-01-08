@@ -12,6 +12,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -55,7 +57,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 }
                 break;
 
-            case "eliminarMiembro":     // PENDIENTE: tener en cuenta q puede estar asociado a claseMiembro
+            case "eliminarMiembro": // PENDIENTE, actualizar miembroClase por si acaso
                     if(hayCeldaMiembroSeleccionada()){
                         int fila = vista.tablaMiembro.getSelectedRow();
                         int id = (int) vista.tablaMiembro.getValueAt(fila,0);
@@ -63,6 +65,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                         if(Util.mostrarMensajePregunta("Eliminar miembro: "+id+ " - "+nombre)){
                             modelo.eliminarMiembro(id);
                             refrescarMiembros();
+                            //refrescarMiembroClase();
                             System.out.println("- MIEMBRO ELIMINADO");
                         }
                     }
@@ -99,6 +102,40 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                         refrescarEntrenadores();
                         System.out.println("- ENTRENADOR ELIMINADO");
                         refrescarMiembros();    // por si acaso tenia algun miembro asociado al entrenador borrado
+                        refrescarClases();    // por si acaso tenia alguna clase asociada al entrenador borrado
+                    }
+                }
+                break;
+
+            // CLASE
+            case "borrarEntrenadorClase":
+                vista.comboEntrenadorClase.setSelectedItem(null);
+                break;
+            case "insertarClase":
+                if(!hayCamposVaciosClase()){
+                    insertarClase();
+                    refrescarClases();
+                    System.out.println("- CLASE INSERTADA");
+                }
+                break;
+
+            case "modificarClase":
+                if(hayCeldaClaseSeleccionada() && !hayCamposVaciosClase()){
+                    modificarClase();
+                    refrescarClases();
+                    System.out.println("- CLASE MODIFICADA");
+                }
+                break;
+
+            case "eliminarClase":
+                if(hayCeldaClaseSeleccionada()){
+                    int fila = vista.tablaClase.getSelectedRow();
+                    int id = (int) vista.tablaClase.getValueAt(fila,0);
+                    String nombre = (String) vista.tablaClase.getValueAt(fila,1);
+                    if(Util.mostrarMensajePregunta("Eliminar clase: "+id+ " - "+nombre)){
+                        modelo.eliminarClase(id);
+                        refrescarClases();
+                        System.out.println("- CLASE ELIMINADA");
                     }
                 }
                 break;
@@ -121,44 +158,6 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             e.printStackTrace();
         }
     }
-
-    private void refrescarClases() {
-        try{
-            vista.tablaClase.setModel(construirTableModel(modelo.consultarClase(), vista.dtmClases));
-            vista.comboClaseMiembrosClase.removeAllItems();
-            vista.comboClaseMiembrosClase.removeAllItems();
-            for(int i = 0; i< vista.dtmClases.getRowCount();i++){
-                vista.comboClaseMiembrosClase.addItem(vista.dtmClases.getValueAt(i,0)+" - "+
-                        vista.dtmClases.getValueAt(i,1));
-            }
-            vista.comboClaseMiembrosClase.setSelectedIndex(-1);
-            System.out.println("- Tabla clases refrescada" +
-                    " - Combo clases(en miembros y clases) refrescado");
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
-    private void refrescarEntrenadores() {
-        try{
-            vista.tablaEntrenador.setModel(construirTableModel(modelo.consultarEntrenador(), vista.dtmEntrenadores));
-            vista.comboEntrenadorMiembro.removeAllItems();
-            vista.comboEntrenadorClase.removeAllItems();
-            for(int i = 0; i< vista.dtmEntrenadores.getRowCount();i++){
-                vista.comboEntrenadorMiembro.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
-                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
-                vista.comboEntrenadorClase.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
-                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
-            }
-            vista.comboEntrenadorMiembro.setSelectedIndex(-1);
-            vista.comboEntrenadorClase.setSelectedIndex(-1);
-            System.out.println("- Tabla entrenadores refrescada" +
-                    " - Combo entrenador(en miembros y clases) refrescado");
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
 
     // IMPORTANTE: TENER EN CUENTA QUE EN VISTA TAL VEZ SE PUEDA QUITAR EL METODO Q LO CARGA, SINO QUITAR DESDE AQUI LO RELACIONADO AL COMBOBOX
     private void cargarMembresias() {
@@ -311,6 +310,26 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     }
 
     // ENTRENADOR
+    private void refrescarEntrenadores() {
+        try{
+            vista.tablaEntrenador.setModel(construirTableModel(modelo.consultarEntrenador(), vista.dtmEntrenadores));
+            vista.comboEntrenadorMiembro.removeAllItems();
+            vista.comboEntrenadorClase.removeAllItems();
+            for(int i = 0; i< vista.dtmEntrenadores.getRowCount();i++){
+                vista.comboEntrenadorMiembro.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
+                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
+                vista.comboEntrenadorClase.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
+                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
+            }
+            vista.comboEntrenadorMiembro.setSelectedIndex(-1);
+            vista.comboEntrenadorClase.setSelectedIndex(-1);
+            System.out.println("- Tabla entrenadores refrescada" +
+                    " - Combo entrenador(en miembros y clases) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
     private boolean hayCamposVaciosEntrenador(){
         ArrayList<String> camposVacios = new ArrayList<>();
         boolean hayCamposVacios = false;
@@ -405,6 +424,132 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             );
         }
     }
+
+    // CLASE
+    private void refrescarClases() {
+        try{
+            vista.tablaClase.setModel(construirTableModel(modelo.consultarClase(), vista.dtmClases));
+            vista.comboClaseMiembrosClase.removeAllItems();
+            vista.comboClaseMiembrosClase.removeAllItems();
+            for(int i = 0; i< vista.dtmClases.getRowCount();i++){
+                vista.comboClaseMiembrosClase.addItem(vista.dtmClases.getValueAt(i,0)+" - "+
+                        vista.dtmClases.getValueAt(i,1));
+            }
+            vista.comboClaseMiembrosClase.setSelectedIndex(-1);
+            System.out.println("- Tabla clases refrescada" +
+                    " - Combo clases(en miembros y clases) refrescado");
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private boolean hayCamposVaciosClase(){
+        ArrayList<String> camposVacios = new ArrayList<>();
+        boolean hayCamposVacios = false;
+        if (vista.txtNombreClase.getText().isEmpty()) {
+            camposVacios.add("nombre");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtHoraInicioClase.getText().isEmpty()) {
+            camposVacios.add("hora");
+            hayCamposVacios = true;
+        }
+
+        if (vista.txtDuracionClase.getText().isEmpty()) {
+            camposVacios.add("duracion");
+            hayCamposVacios = true;
+        }
+
+        if (hayCamposVacios){
+            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+            Util.mostrarMensajeError(mensaje);
+            return true;
+        }
+        return false;
+    }
+
+    private void insertarClase() {
+        boolean sinEntrenador = vista.comboEntrenadorClase.getSelectedItem() == null;
+        boolean sinDescripcion = vista.txtDescripcionClase.getText().isEmpty();
+
+        if (sinEntrenador && sinDescripcion) {
+            modelo.insertarClaseSinDescripcionNiEntrenador(
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText())
+            );
+        } else if (sinEntrenador) {
+            modelo.insertarClaseSinEntrenador(
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    vista.txtDescripcionClase.getText()
+            );
+        } else if (sinDescripcion) {
+            modelo.insertarClaseSinDescripcion(
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    String.valueOf(vista.comboEntrenadorClase.getSelectedItem())
+            );
+        } else {
+            modelo.insertarClase(
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    vista.txtDescripcionClase.getText(),
+                    String.valueOf(vista.comboEntrenadorClase.getSelectedItem())
+            );
+        }
+    }
+
+    private boolean hayCeldaClaseSeleccionada(){
+        int fila = vista.tablaClase.getSelectedRow();
+        if(fila!=-1){
+            return true;
+        }
+        Util.mostrarMensajeError("No has seleccionado ninguna clase en la tabla");
+        return false;
+    }
+
+    private void modificarClase(){
+        int fila = vista.tablaClase.getSelectedRow();
+        int idClase = (int) vista.tablaClase.getValueAt(fila, 0);
+
+        boolean sinEntrenador = vista.comboEntrenadorClase.getSelectedItem() == null;
+        boolean sinDescripcion = vista.txtDescripcionClase.getText().isEmpty();
+
+        if (sinEntrenador && sinDescripcion) {
+            modelo.modificarClaseSinDescripcionNiEntrenador(idClase,
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()));
+        } else if (sinEntrenador) {
+            modelo.modificarClaseSinEntrenador(idClase,
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    vista.txtDescripcionClase.getText()
+            );
+        } else if (sinDescripcion) {
+            modelo.modificarClaseSinDescripcion(idClase,
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    String.valueOf(vista.comboEntrenadorClase.getSelectedItem())
+            );
+        } else {
+            modelo.modificarClase(idClase,
+                    vista.txtNombreClase.getText(),
+                    LocalTime.parse(vista.txtHoraInicioClase.getText()),
+                    Integer.parseInt(vista.txtDuracionClase.getText()),
+                    vista.txtDescripcionClase.getText(),
+                    String.valueOf(vista.comboEntrenadorClase.getSelectedItem())
+            );
+        }
+    }
+
 
     // VENTANA
     private void addWindowListeners(WindowListener listener){
@@ -517,7 +662,11 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.txtNombreClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,1)));
                 vista.txtHoraInicioClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,2)));
                 vista.txtDuracionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,3)));
-                vista.txtDescripcionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,4)));
+                if(vista.tablaClase.getValueAt(fila,4)==null){
+                    vista.txtDescripcionClase.setText("");
+                } else{
+                    vista.txtDescripcionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,4)));
+                }
                 String idEntrenador = String.valueOf(vista.tablaClase.getValueAt(fila,5));
                 buscarItemComboBox(vista.comboEntrenadorClase, idEntrenador);
             } else if (e.getSource().equals(vista.tablaMiembrosClase.getSelectionModel())){
@@ -575,6 +724,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.modificarClaseButton.setActionCommand("modificarClase");
         vista.eliminarClaseButton.addActionListener(listener);
         vista.eliminarClaseButton.setActionCommand("eliminarClase");
+        vista.borrarEntrenadorClaseButton.addActionListener(listener);
+        vista.borrarEntrenadorClaseButton.setActionCommand("borrarEntrenadorClase");
 
         // especialidades
         vista.consultarEspecialidadButton.addActionListener(listener);

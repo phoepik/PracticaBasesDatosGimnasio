@@ -374,7 +374,7 @@
                   <forms/>
                 </constraints>
                 <properties>
-                  <text value="Sueldo"/>
+                  <text value="Sueldo Base"/>
                 </properties>
               </component>
               <component id="f0c10" class="javax.swing.JLabel">
@@ -476,6 +476,8 @@
             <colspec value="fill:d:noGrow"/>
             <colspec value="left:4dlu:noGrow"/>
             <colspec value="fill:223px:grow"/>
+            <colspec value="left:4dlu:noGrow"/>
+            <colspec value="fill:max(d;4px):noGrow"/>
             <constraints>
               <tabbedpane title="Clases"/>
             </constraints>
@@ -544,6 +546,7 @@
                 </constraints>
                 <properties>
                   <text value="Entrenador"/>
+                  <toolTipText value="Campo opcional"/>
                 </properties>
               </component>
               <component id="500e8" class="javax.swing.JComboBox" binding="comboEntrenadorClase">
@@ -551,7 +554,9 @@
                   <grid row="8" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
                   <forms/>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="Campo opcional"/>
+                </properties>
               </component>
               <component id="85391" class="javax.swing.JTextField" binding="txtDescripcionClase">
                 <constraints>
@@ -614,6 +619,15 @@
                   </component>
                 </children>
               </scrollpane>
+              <component id="7910d" class="javax.swing.JButton" binding="borrarEntrenadorClaseButton">
+                <constraints>
+                  <grid row="8" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                  <forms/>
+                </constraints>
+                <properties>
+                  <text value="Borrar"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="3fd91" binding="JPanelMiembrosClase" layout-manager="FormLayout">
