@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS clases (
     duracion_minutos INT NOT NULL,
     descripcion VARCHAR(200),
 	id_entrenador INT,
-    FOREIGN KEY (id_entrenador) REFERENCES entrenadores(id_entrenador)
+    FOREIGN KEY (id_entrenador) REFERENCES entrenadores(id_entrenador) ON DELETE SET NULL
 );
 --
 CREATE TABLE IF NOT EXISTS miembro_clase (
