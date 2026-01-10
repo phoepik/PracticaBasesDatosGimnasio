@@ -1,9 +1,9 @@
 package com.jorgesa.gimnasioMVC.gui.enums;
 
 public enum Membresia {
-    BASICA(1,"Basica", 29.99, "No incluye clases ni entrenador"),
-    PREMIUM(2,"Premium", 39.99, "Incluye un entrenador"),
-    ULTIMATE(3,"Ultimate",49.99, "Incluye un entrenador y todas las clases que quieran");
+    BASICA(1,"Basica", 29.99, "Plan basico, para personas que no requieran ayuda"),
+    PREMIUM(2,"Premium", 39.99, "Plan completo el cual viene con asesoria personal"),
+    ULTIMATE(3,"Ultimate",49.99, "El plan mas completo, permite invitar a un amigo siempre que quieras");
 
     private int idMembresia;
     private String nombre;

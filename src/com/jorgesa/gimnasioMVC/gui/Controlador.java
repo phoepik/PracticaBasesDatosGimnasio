@@ -12,7 +12,6 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -26,6 +25,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         this.modelo = modelo;
         this.vista = vista;
         modelo.conectar();
+        setOptions();
         addActionListeners(this);
         addWindowListeners(this);
         iniciarListas(this);
@@ -65,7 +65,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                         if(Util.mostrarMensajePregunta("Eliminar miembro: "+id+ " - "+nombre)){
                             modelo.eliminarMiembro(id);
                             refrescarMiembros();
-                            //refrescarMiembroClase();
+                            refrescarMiembrosClase();   // por si estaba en un miembroClase
                             System.out.println("- MIEMBRO ELIMINADO");
                         }
                     }
@@ -135,20 +135,77 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                     if(Util.mostrarMensajePregunta("Eliminar clase: "+id+ " - "+nombre)){
                         modelo.eliminarClase(id);
                         refrescarClases();
+                        refrescarMiembrosClase();   // por si estaba en un miembroClase
                         System.out.println("- CLASE ELIMINADA");
                     }
                 }
                 break;
 
+            // MIEMBROCLASE
             case "insertarMiembroClase":    // no acabado, pero funcional
-                modelo.insertarMiembrosClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
-                        String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
-                        vista.fechaInscripcionMiembrosClase.getDate(),
-                        vista.checkBoxNovatoMiembrosClase.isSelected());
-                refrescarMiembrosClase();
+                if(!hayCamposVaciosMiembroClase()){
+                    modelo.insertarMiembrosClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
+                            String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
+                            vista.fechaInscripcionMiembrosClase.getDate(),
+                            vista.checkBoxNovatoMiembrosClase.isSelected());
+                    refrescarMiembrosClase();
+                }
+                break;
+
+            case "modificarMiembroClase":
+                if(hayCeldaMiembroClaseSeleccionada() && !hayCamposVaciosMiembroClase()){
+                    modelo.modificarMiembroClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
+                            String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
+                            vista.fechaInscripcionMiembrosClase.getDate(),
+                            vista.checkBoxNovatoMiembrosClase.isSelected());
+                    refrescarMiembrosClase();
+                    System.out.println("- MIEMBROCLASE MODIFICADO");
+                }
+                break;
+
+            case "eliminarMiembroClase":
+                if(hayCeldaMiembroClaseSeleccionada()){
+                    int fila = vista.tablaMiembrosClase.getSelectedRow();
+                    String miembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,0));
+                    String clase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,1));
+                    if(Util.mostrarMensajePregunta("Eliminar MiembroClase: "+miembro+ " - "+clase)){
+                        modelo.eliminarMiembroClase(miembro,clase);
+                        refrescarMiembrosClase();
+                        System.out.println("- MIEMBROCLASE ELIMINADO");
+                    }
+                }
+                break;
+
+                // EXTRA
+            case "guardarOpciones":
+            modelo.setPropValues(vista.optionDialog.txtIP.getText(), vista.optionDialog.txtUsuario.getText(),
+                    String.valueOf(vista.optionDialog.pfPass.getPassword()), String.valueOf(vista.optionDialog.pfAdmin.getPassword()));
+            vista.optionDialog.dispose();
+            vista.dispose();
+            new Controlador(new Modelo(), new Vista());
+            break;
+
+            case "abrirOpciones":
+            if(String.valueOf(vista.adminPassword.getPassword()).equals(modelo.getAdminPassword())) {
+                vista.adminPassword.setText("");
+                vista.adminPasswordDialog.dispose();
+                vista.optionDialog.setVisible(true);
+            } else {
+                Util.mostrarMensajeError("La contraseña introducida no es correcta.");
+            }
+            break;
+
+            case "Opciones":
+            vista.adminPasswordDialog.setVisible(true);
+            break;
+
+            case "Salir":
+                System.exit(0);
                 break;
         }
     }
+
+
 
     private void refrescarMiembrosClase() {
         try{
@@ -159,7 +216,6 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         }
     }
 
-    // IMPORTANTE: TENER EN CUENTA QUE EN VISTA TAL VEZ SE PUEDA QUITAR EL METODO Q LO CARGA, SINO QUITAR DESDE AQUI LO RELACIONADO AL COMBOBOX
     private void cargarMembresias() {
         try{
             vista.tablaMembresia.setModel(construirTableModel(modelo.consultarMembresia(), vista.dtmMembresias));
@@ -175,7 +231,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             e.printStackTrace();
         }
     }
-    // IMPORTANTE: TENER EN CUENTA QUE EN VISTA TAL VEZ SE PUEDA QUITAR EL METODO Q LO CARGA, SINO QUITAR DESDE AQUI LO RELACIONADO AL COMBOBOX
+
     private void cargarEspecialidades() {
         try{
             vista.tablaEspecialidad.setModel(construirTableModel(modelo.consultarEspecialidad(), vista.dtmEspecialidades));
@@ -550,6 +606,41 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         }
     }
 
+    // MIEMBROSCLASE
+    private boolean hayCamposVaciosMiembroClase() {
+        ArrayList<String> camposVacios = new ArrayList<>();
+        boolean hayCamposVacios = false;
+        if (vista.comboMiembroMiembrosClase.getSelectedItem()==null) {
+            camposVacios.add("miembro");
+            hayCamposVacios = true;
+        }
+
+        if (vista.comboClaseMiembrosClase.getSelectedItem()==null) {
+            camposVacios.add("clase");
+            hayCamposVacios = true;
+        }
+
+        if (vista.fechaInscripcionMiembrosClase.getText().isEmpty()) {
+            camposVacios.add("fechaInscripcion");
+            hayCamposVacios = true;
+        }
+
+        if (hayCamposVacios){
+            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+            Util.mostrarMensajeError(mensaje);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean hayCeldaMiembroClaseSeleccionada(){
+        int fila = vista.tablaMiembrosClase.getSelectedRow();
+        if(fila!=-1){
+            return true;
+        }
+        Util.mostrarMensajeError("No has seleccionado ninguna fila en la tabla");
+        return false;
+    }
 
     // VENTANA
     private void addWindowListeners(WindowListener listener){
@@ -727,14 +818,6 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.borrarEntrenadorClaseButton.addActionListener(listener);
         vista.borrarEntrenadorClaseButton.setActionCommand("borrarEntrenadorClase");
 
-        // especialidades
-        vista.consultarEspecialidadButton.addActionListener(listener);
-        vista.consultarEspecialidadButton.setActionCommand("consultarEspecialidad");
-
-        // membresias
-        vista.consultarMembresiaButton.addActionListener(listener);
-        vista.consultarMembresiaButton.setActionCommand("consultarMembresia");
-
         // miembrosClase
         vista.insertarMiembroClaseButton.addActionListener(listener);
         vista.insertarMiembroClaseButton.setActionCommand("insertarMiembroClase");
@@ -742,6 +825,12 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.modificarMiembroClaseButton.setActionCommand("modificarMiembroClase");
         vista.eliminarMiembroClaseButton.addActionListener(listener);
         vista.eliminarMiembroClaseButton.setActionCommand("eliminarMiembroClase");
+
+        vista.itemOpciones.addActionListener(listener);
+        vista.itemSalir.addActionListener(listener);
+        vista.btnValidate.addActionListener(listener);
+        vista.optionDialog.btnOpcionesGuardar.addActionListener(listener);
+        vista.optionDialog.btnOpcionesGuardar.setActionCommand("guardarOpciones");
     }
 
     private void cargarTodo() {
@@ -751,6 +840,13 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         refrescarEntrenadores();
         refrescarClases();
         refrescarMiembrosClase();
+    }
+
+    private void setOptions() {
+        vista.optionDialog.txtIP.setText(modelo.getIp());
+        vista.optionDialog.txtUsuario.setText(modelo.getUser());
+        vista.optionDialog.pfPass.setText(modelo.getPassword());
+        vista.optionDialog.pfAdmin.setText(modelo.getAdminPassword());
     }
 
     /*LISTENERS IMPLEMENTADOS NO UTILIZADOS*/

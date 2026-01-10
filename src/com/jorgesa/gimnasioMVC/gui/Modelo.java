@@ -2,7 +2,6 @@ package com.jorgesa.gimnasioMVC.gui;
 
 import com.jorgesa.gimnasioMVC.gui.enums.Especialidad;
 import com.jorgesa.gimnasioMVC.gui.enums.Membresia;
-import jdk.nashorn.internal.codegen.types.Type;
 
 import java.io.*;
 import java.sql.*;
@@ -669,7 +668,6 @@ public class Modelo {
         }
     }
 
-
     void modificarMiembroClase(String miembro, String clase, LocalDate fechaInscripcion, boolean esNovato){
         String sentenciaSql ="UPDATE miembro_clase SET fecha_inscripcion = ?, novato = ? " +
                 "WHERE id_miembro = ? AND id_clase = ?";
@@ -757,9 +755,12 @@ public class Modelo {
         }
     }
 
-    void eliminarMiembroClase(int idMiembro, int idClase) {
+    void eliminarMiembroClase(String miembro, String clase) {
         String sentenciaSql = "DELETE FROM miembro_clase WHERE id_miembro = ? AND id_clase = ?";
         PreparedStatement sentencia = null;
+
+        int idMiembro = Integer.valueOf(miembro.split(" - ")[0]);
+        int idClase = Integer.valueOf(clase.split(" - ")[0]);
 
         try {
             sentencia = conexion.prepareStatement(sentenciaSql);

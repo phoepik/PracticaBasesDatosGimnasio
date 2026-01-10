@@ -765,8 +765,6 @@
           <grid id="99e77" binding="JPanelEspecialidades" layout-manager="FormLayout">
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:4dlu:noGrow"/>
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:d:grow"/>
             <colspec value="fill:226px:grow"/>
             <colspec value="left:4dlu:noGrow"/>
@@ -780,7 +778,7 @@
             <children>
               <scrollpane id="b940a">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
@@ -792,20 +790,9 @@
                   </component>
                 </children>
               </scrollpane>
-              <component id="ab7e8" class="javax.swing.JButton" binding="consultarEspecialidadButton">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="4" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Consultar Especialidades"/>
-                </properties>
-              </component>
             </children>
           </grid>
           <grid id="77f6e" binding="JPanelMembresias" layout-manager="FormLayout">
-            <rowspec value="center:max(d;4px):noGrow"/>
-            <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:max(d;4px):noGrow"/>
             <rowspec value="top:4dlu:noGrow"/>
             <rowspec value="center:d:grow"/>
@@ -818,7 +805,7 @@
             <children>
               <scrollpane id="c3f11">
                 <constraints>
-                  <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="7" hsize-policy="7" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
                   <forms defaultalign-horz="false" defaultalign-vert="false"/>
                 </constraints>
                 <properties/>
@@ -830,15 +817,6 @@
                   </component>
                 </children>
               </scrollpane>
-              <component id="d5f21" class="javax.swing.JButton" binding="consultarMembresiaButton">
-                <constraints>
-                  <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
-                  <forms/>
-                </constraints>
-                <properties>
-                  <text value="Consultar Membresias"/>
-                </properties>
-              </component>
             </children>
           </grid>
         </children>

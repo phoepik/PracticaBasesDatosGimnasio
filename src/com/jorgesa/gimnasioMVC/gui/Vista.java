@@ -57,12 +57,10 @@ public class Vista extends JFrame {
     // Especialidades
     JPanel JPanelEspecialidades;
     JTable tablaEspecialidad;
-    JButton consultarEspecialidadButton;
 
     // Membresias
     JPanel JPanelMembresias;
     JTable tablaMembresia;
-    JButton consultarMembresiaButton;
 
     // MiembrosClase
     JPanel JPanelMiembrosClase;
@@ -89,8 +87,13 @@ public class Vista extends JFrame {
 
     // Menubar
     JMenuItem itemOpciones;
-    JMenuItem itemDesconectar;
     JMenuItem itemSalir;
+
+    //cuadro dialogo
+    OptionDialog optionDialog;
+    JDialog adminPasswordDialog;
+    JButton btnValidate;
+    JPasswordField adminPassword;
 
     public Vista() {
         super(TITULO_FRAME);
@@ -106,8 +109,12 @@ public class Vista extends JFrame {
         this.setSize(new Dimension(this.getWidth() + 200, this.getHeight()));
         this.setVisible(true);
         this.setLocationRelativeTo(null);
+        // creo cuadro de dialogo
+        optionDialog=new OptionDialog(this);
         //llamo menu
         setMenu();
+        //llamo cuadro dialogo admin
+        setAdminDialog();
         //cargo enumerados
         setEnumComboBox();
         //cargo table models
@@ -119,12 +126,9 @@ public class Vista extends JFrame {
         JMenu menu = new JMenu("Archivo");
         itemOpciones = new JMenuItem("Opciones");
         itemOpciones.setActionCommand("Opciones");
-        itemDesconectar = new JMenuItem("Desconectar");
-        itemDesconectar.setActionCommand("Desconectar");
         itemSalir = new JMenuItem("Salir");
         itemSalir.setActionCommand("Salir");
         menu.add(itemOpciones);
-        menu.add(itemDesconectar);
         menu.add(itemSalir);
         mbBar.add(menu);
         mbBar.add(Box.createHorizontalGlue());
@@ -164,6 +168,22 @@ public class Vista extends JFrame {
 
         this.dtmMiembrosClases = new DefaultTableModel();
         this.tablaMiembrosClase.setModel(dtmMiembrosClases);
+    }
+
+    private void setAdminDialog() {
+        btnValidate = new JButton("Validar");
+        btnValidate.setActionCommand("abrirOpciones");
+        adminPassword = new JPasswordField();
+        //dimension al cuadro de texto
+        adminPassword.setPreferredSize(new Dimension(100,26));
+        Object[] options=new Object[] {adminPassword,btnValidate};
+        JOptionPane jop = new JOptionPane("Introduce la contraseña",JOptionPane.WARNING_MESSAGE,
+                JOptionPane.YES_NO_OPTION,null,options);
+        adminPasswordDialog = new JDialog(this,"Opciones",true);
+        adminPasswordDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        adminPasswordDialog.setContentPane(jop);
+        adminPasswordDialog.pack();
+        adminPasswordDialog.setLocationRelativeTo(this);
     }
 }
 
