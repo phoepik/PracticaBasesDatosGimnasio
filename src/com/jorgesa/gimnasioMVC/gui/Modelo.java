@@ -897,4 +897,105 @@ public class Modelo {
         }
         return null;
     }
+
+    ResultSet consultarMiembroClasePorClase(){
+        String sentenciaSql = "SELECT id_miembro AS Miembro, " +
+                "id_clase AS Clase, " +
+                "fecha_inscripcion AS Inscripcion, "+
+                "novato AS 'Es novato' " +
+                "FROM miembro_clase ORDER BY id_clase";
+        PreparedStatement sentencia;
+        ResultSet resultado;
+        try {
+            sentencia = conexion.prepareStatement(sentenciaSql);
+            resultado = sentencia.executeQuery();
+            return resultado;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public boolean dniEntrenadorYaExiste(String dni) {
+        String query = "SELECT existeDniEntrenador(?)";
+        boolean exists = false;
+        try {
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setString(1, dni);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            exists = rs.getBoolean(1);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public boolean dniMiembroYaExiste(String dni) {
+        String query = "SELECT existeDniMiembro(?)";
+        boolean exists = false;
+        try {
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setString(1, dni);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            exists = rs.getBoolean(1);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public boolean nombreClaseYaExiste(String nombre) {
+        String query = "SELECT existeNombreClase(?)";
+        boolean exists = false;
+        try {
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setString(1, nombre);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            exists = rs.getBoolean(1);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public boolean miembroClaseYaExiste(String miembro, String clase) {
+
+        int idMiembro = Integer.parseInt(miembro.split(" - ")[0]);
+        int idClase = Integer.parseInt(clase.split(" - ")[0]);
+
+        String query = "SELECT existeMiembroClase(?, ?)";
+        boolean exists = false;
+        try {
+            PreparedStatement stmt = conexion.prepareStatement(query);
+            stmt.setInt(1, idMiembro);
+            stmt.setInt(2, idClase);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            exists = rs.getBoolean(1);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return exists;
+    }
+
+    public ResultSet buscarMiembroPorDni(String dni) {
+        ResultSet rs = null;
+        try {
+            CallableStatement stmt = conexion.prepareCall("{CALL buscarMiembroPorDni(?)}");
+            stmt.setString(1, dni);
+            rs = stmt.executeQuery();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rs;
+    }
+
+
 }

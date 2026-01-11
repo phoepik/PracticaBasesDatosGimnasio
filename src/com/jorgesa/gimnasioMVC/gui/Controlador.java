@@ -21,7 +21,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private Modelo modelo;
     private Vista vista;
 
-    public Controlador(Modelo modelo, Vista vista){
+    public Controlador(Modelo modelo, Vista vista) {
         this.modelo = modelo;
         this.vista = vista;
         modelo.conectar();
@@ -42,15 +42,21 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "insertarMiembro":
-                if(!hayCamposVaciosMiembro()){
-                    insertarMiembro();
-                    refrescarMiembros();
-                    System.out.println("- MIEMBRO INSERTADO");
+                if (!hayCamposVaciosMiembro()) {
+                    String dni = vista.txtDniMiembro.getText();
+                    if (!modelo.dniMiembroYaExiste(dni)) {
+                        insertarMiembro();
+                        refrescarMiembros();
+                        System.out.println("- MIEMBRO INSERTADO");
+                    } else {
+                        Util.mostrarMensajeError("El dni " + dni + " ya existe");
+                    }
+
                 }
-            break;
+                break;
 
             case "modificarMiembro":
-                if(hayCeldaMiembroSeleccionada() && !hayCamposVaciosMiembro()){
+                if (hayCeldaMiembroSeleccionada() && !hayCamposVaciosMiembro()) {
                     modificarMiembro();
                     refrescarMiembros();
                     System.out.println("- MIEMBRO MODIFICADO");
@@ -58,17 +64,27 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "eliminarMiembro": // PENDIENTE, actualizar miembroClase por si acaso
-                    if(hayCeldaMiembroSeleccionada()){
-                        int fila = vista.tablaMiembro.getSelectedRow();
-                        int id = (int) vista.tablaMiembro.getValueAt(fila,0);
-                        String nombre = (String) vista.tablaMiembro.getValueAt(fila,1);
-                        if(Util.mostrarMensajePregunta("Eliminar miembro: "+id+ " - "+nombre)){
-                            modelo.eliminarMiembro(id);
-                            refrescarMiembros();
-                            refrescarMiembrosClase();   // por si estaba en un miembroClase
-                            System.out.println("- MIEMBRO ELIMINADO");
-                        }
+                if (hayCeldaMiembroSeleccionada()) {
+                    int fila = vista.tablaMiembro.getSelectedRow();
+                    int id = (int) vista.tablaMiembro.getValueAt(fila, 0);
+                    String nombre = (String) vista.tablaMiembro.getValueAt(fila, 1);
+                    if (Util.mostrarMensajePregunta("Eliminar miembro: " + id + " - " + nombre)) {
+                        modelo.eliminarMiembro(id);
+                        refrescarMiembros();
+                        refrescarMiembrosClase();   // por si estaba en un miembroClase
+                        System.out.println("- MIEMBRO ELIMINADO");
                     }
+                }
+                break;
+
+            case "filtrarMiembro":
+                if(vista.txtDniFiltrarMiembro.getText().isEmpty()){
+                   refrescarMiembros();
+                   Util.mostrarMensajeInformativo("Filtros quitados");
+                } else{
+                    refrescarMiembrosPorDni(vista.txtDniFiltrarMiembro.getText());
+                    Util.mostrarMensajeInformativo("Filtrado correctamente");
+                }
                 break;
 
             // ENTRENADOR
@@ -77,15 +93,20 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "insertarEntrenador":
-                if(!hayCamposVaciosEntrenador()){
-                    insertarEntrenador();
-                    refrescarEntrenadores();
-                    System.out.println("- ENTRENADOR INSERTADO");
+                if (!hayCamposVaciosEntrenador()) {
+                    String dni = vista.txtDniEntrenador.getText();
+                    if (!modelo.dniEntrenadorYaExiste(dni)) {
+                        insertarEntrenador();
+                        refrescarEntrenadores();
+                        System.out.println("- ENTRENADOR INSERTADO");
+                    } else {
+                        Util.mostrarMensajeError("El DNI: " + dni + " ya existe");
+                    }
                 }
                 break;
 
             case "modificarEntrenador":
-                if(hayCeldaEntrenadorSeleccionada() && !hayCamposVaciosEntrenador()){
+                if (hayCeldaEntrenadorSeleccionada() && !hayCamposVaciosEntrenador()) {
                     modificarEntrenador();
                     refrescarEntrenadores();
                     System.out.println("- ENTRENADOR MODIFICADO");
@@ -93,11 +114,11 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "eliminarEntrenador":
-                if(hayCeldaEntrenadorSeleccionada()){
+                if (hayCeldaEntrenadorSeleccionada()) {
                     int fila = vista.tablaEntrenador.getSelectedRow();
-                    int id = (int) vista.tablaEntrenador.getValueAt(fila,0);
-                    String nombre = (String) vista.tablaEntrenador.getValueAt(fila,1);
-                    if(Util.mostrarMensajePregunta("Eliminar entrenador: "+id+ " - "+nombre)){
+                    int id = (int) vista.tablaEntrenador.getValueAt(fila, 0);
+                    String nombre = (String) vista.tablaEntrenador.getValueAt(fila, 1);
+                    if (Util.mostrarMensajePregunta("Eliminar entrenador: " + id + " - " + nombre)) {
                         modelo.eliminarEntrenador(id);
                         refrescarEntrenadores();
                         System.out.println("- ENTRENADOR ELIMINADO");
@@ -112,15 +133,20 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.comboEntrenadorClase.setSelectedItem(null);
                 break;
             case "insertarClase":
-                if(!hayCamposVaciosClase()){
-                    insertarClase();
-                    refrescarClases();
-                    System.out.println("- CLASE INSERTADA");
+                if (!hayCamposVaciosClase()) {
+                    String clase = vista.txtNombreClase.getText();
+                    if (!modelo.nombreClaseYaExiste(clase)) {
+                        insertarClase();
+                        refrescarClases();
+                        System.out.println("- CLASE INSERTADA");
+                    } else {
+                        Util.mostrarMensajeError("El nombre " + clase + " ya existe");
+                    }
                 }
                 break;
 
             case "modificarClase":
-                if(hayCeldaClaseSeleccionada() && !hayCamposVaciosClase()){
+                if (hayCeldaClaseSeleccionada() && !hayCamposVaciosClase()) {
                     modificarClase();
                     refrescarClases();
                     System.out.println("- CLASE MODIFICADA");
@@ -128,11 +154,11 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "eliminarClase":
-                if(hayCeldaClaseSeleccionada()){
+                if (hayCeldaClaseSeleccionada()) {
                     int fila = vista.tablaClase.getSelectedRow();
-                    int id = (int) vista.tablaClase.getValueAt(fila,0);
-                    String nombre = (String) vista.tablaClase.getValueAt(fila,1);
-                    if(Util.mostrarMensajePregunta("Eliminar clase: "+id+ " - "+nombre)){
+                    int id = (int) vista.tablaClase.getValueAt(fila, 0);
+                    String nombre = (String) vista.tablaClase.getValueAt(fila, 1);
+                    if (Util.mostrarMensajePregunta("Eliminar clase: " + id + " - " + nombre)) {
                         modelo.eliminarClase(id);
                         refrescarClases();
                         refrescarMiembrosClase();   // por si estaba en un miembroClase
@@ -143,17 +169,23 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
             // MIEMBROCLASE
             case "insertarMiembroClase":    // no acabado, pero funcional
-                if(!hayCamposVaciosMiembroClase()){
-                    modelo.insertarMiembrosClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
-                            String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
-                            vista.fechaInscripcionMiembrosClase.getDate(),
-                            vista.checkBoxNovatoMiembrosClase.isSelected());
-                    refrescarMiembrosClase();
+                if (!hayCamposVaciosMiembroClase()) {
+                    String miembro = String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem());
+                    String clase = String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem());
+                    if (!modelo.miembroClaseYaExiste(miembro, clase)) {
+                        modelo.insertarMiembrosClase(miembro,
+                                clase,
+                                vista.fechaInscripcionMiembrosClase.getDate(),
+                                vista.checkBoxNovatoMiembrosClase.isSelected());
+                        refrescarMiembrosClase();
+                    } else {
+                        Util.mostrarMensajeError("El miembro: " + miembro + " ya está asignado a la clase: " + clase);
+                    }
                 }
                 break;
 
             case "modificarMiembroClase":
-                if(hayCeldaMiembroClaseSeleccionada() && !hayCamposVaciosMiembroClase()){
+                if (hayCeldaMiembroClaseSeleccionada() && !hayCamposVaciosMiembroClase()) {
                     modelo.modificarMiembroClase(String.valueOf(vista.comboMiembroMiembrosClase.getSelectedItem()),
                             String.valueOf(vista.comboClaseMiembrosClase.getSelectedItem()),
                             vista.fechaInscripcionMiembrosClase.getDate(),
@@ -164,40 +196,48 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 break;
 
             case "eliminarMiembroClase":
-                if(hayCeldaMiembroClaseSeleccionada()){
+                if (hayCeldaMiembroClaseSeleccionada()) {
                     int fila = vista.tablaMiembrosClase.getSelectedRow();
-                    String miembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,0));
-                    String clase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,1));
-                    if(Util.mostrarMensajePregunta("Eliminar MiembroClase: "+miembro+ " - "+clase)){
-                        modelo.eliminarMiembroClase(miembro,clase);
+                    String miembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila, 0));
+                    String clase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila, 1));
+                    if (Util.mostrarMensajePregunta("Eliminar MiembroClase: " + miembro + " - " + clase)) {
+                        modelo.eliminarMiembroClase(miembro, clase);
                         refrescarMiembrosClase();
                         System.out.println("- MIEMBROCLASE ELIMINADO");
                     }
                 }
                 break;
 
-                // EXTRA
+            case "ordenarMiembro":
+                refrescarMiembrosClase();
+                break;
+
+            case "ordenarClase":
+                refrescarMiembrosClasePorClase();
+                break;
+
+            // EXTRA
             case "guardarOpciones":
-            modelo.setPropValues(vista.optionDialog.txtIP.getText(), vista.optionDialog.txtUsuario.getText(),
-                    String.valueOf(vista.optionDialog.pfPass.getPassword()), String.valueOf(vista.optionDialog.pfAdmin.getPassword()));
-            vista.optionDialog.dispose();
-            vista.dispose();
-            new Controlador(new Modelo(), new Vista());
-            break;
+                modelo.setPropValues(vista.optionDialog.txtIP.getText(), vista.optionDialog.txtUsuario.getText(),
+                        String.valueOf(vista.optionDialog.pfPass.getPassword()), String.valueOf(vista.optionDialog.pfAdmin.getPassword()));
+                vista.optionDialog.dispose();
+                vista.dispose();
+                new Controlador(new Modelo(), new Vista());
+                break;
 
             case "abrirOpciones":
-            if(String.valueOf(vista.adminPassword.getPassword()).equals(modelo.getAdminPassword())) {
-                vista.adminPassword.setText("");
-                vista.adminPasswordDialog.dispose();
-                vista.optionDialog.setVisible(true);
-            } else {
-                Util.mostrarMensajeError("La contraseña introducida no es correcta.");
-            }
-            break;
+                if (String.valueOf(vista.adminPassword.getPassword()).equals(modelo.getAdminPassword())) {
+                    vista.adminPassword.setText("");
+                    vista.adminPasswordDialog.dispose();
+                    vista.optionDialog.setVisible(true);
+                } else {
+                    Util.mostrarMensajeError("La contraseña introducida no es correcta.");
+                }
+                break;
 
             case "Opciones":
-            vista.adminPasswordDialog.setVisible(true);
-            break;
+                vista.adminPasswordDialog.setVisible(true);
+                break;
 
             case "Salir":
                 System.exit(0);
@@ -206,67 +246,73 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     }
 
 
-
-    private void refrescarMiembrosClase() {
-        try{
-            vista.tablaMiembrosClase.setModel(construirTableModel(modelo.consultarMiembroClase(),vista.dtmMiembrosClases));
-            System.out.println("- Tabla miembrosClase refrescada");
-        } catch (SQLException e){
-            e.printStackTrace();
-        }
-    }
-
     private void cargarMembresias() {
-        try{
+        try {
             vista.tablaMembresia.setModel(construirTableModel(modelo.consultarMembresia(), vista.dtmMembresias));
             vista.comboMembresiaMiembro.removeAllItems();
-            for(int i = 0; i< vista.dtmMembresias.getRowCount();i++){
-                vista.comboMembresiaMiembro.addItem(vista.dtmMembresias.getValueAt(i,0)+" - "+
-                        vista.dtmMembresias.getValueAt(i,1));
+            for (int i = 0; i < vista.dtmMembresias.getRowCount(); i++) {
+                vista.comboMembresiaMiembro.addItem(vista.dtmMembresias.getValueAt(i, 0) + " - " +
+                        vista.dtmMembresias.getValueAt(i, 1));
             }
             vista.comboMembresiaMiembro.setSelectedIndex(-1);
             System.out.println("- Tabla membresias refrescada" +
                     " - Combo membresia(en miembros) refrescado");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void cargarEspecialidades() {
-        try{
+        try {
             vista.tablaEspecialidad.setModel(construirTableModel(modelo.consultarEspecialidad(), vista.dtmEspecialidades));
             vista.comboEspecialidadEntrenador.removeAllItems();
-            for(int i = 0; i< vista.dtmEspecialidades.getRowCount();i++){
-                vista.comboEspecialidadEntrenador.addItem(vista.dtmEspecialidades.getValueAt(i,0)+" - "+
-                        vista.dtmEspecialidades.getValueAt(i,1));
+            for (int i = 0; i < vista.dtmEspecialidades.getRowCount(); i++) {
+                vista.comboEspecialidadEntrenador.addItem(vista.dtmEspecialidades.getValueAt(i, 0) + " - " +
+                        vista.dtmEspecialidades.getValueAt(i, 1));
             }
             vista.comboEspecialidadEntrenador.setSelectedIndex(-1);
             System.out.println("- Tabla especialidades refrescada" +
                     " - Combo especialidad(en entrenadores) refrescado");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     // MIEMBRO
     private void refrescarMiembros() {
-        try{
+        try {
             vista.tablaMiembro.setModel(construirTableModel(modelo.consultarMiembro(), vista.dtmMiembros));
             vista.comboMiembroMiembrosClase.removeAllItems();
-            for(int i = 0; i< vista.dtmMiembros.getRowCount();i++){
-                vista.comboMiembroMiembrosClase.addItem(vista.dtmMiembros.getValueAt(i,0)+" - "+
-                        vista.dtmMiembros.getValueAt(i,2)+", " + vista.dtmMiembros.getValueAt(i, 1));
+            for (int i = 0; i < vista.dtmMiembros.getRowCount(); i++) {
+                vista.comboMiembroMiembrosClase.addItem(vista.dtmMiembros.getValueAt(i, 0) + " - " +
+                        vista.dtmMiembros.getValueAt(i, 2) + ", " + vista.dtmMiembros.getValueAt(i, 1));
             }
             vista.comboMiembroMiembrosClase.setSelectedIndex(-1);
             System.out.println("- Tabla miembros refrescada" +
                     " - Combo miembro(en miembrosClase) refrescado");
-        } catch (SQLException e){
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void refrescarMiembrosPorDni(String dni) {
+        try {
+            vista.tablaMiembro.setModel(construirTableModel(modelo.buscarMiembroPorDni(dni), vista.dtmMiembros));
+            vista.comboMiembroMiembrosClase.removeAllItems();
+            for (int i = 0; i < vista.dtmMiembros.getRowCount(); i++) {
+                vista.comboMiembroMiembrosClase.addItem(vista.dtmMiembros.getValueAt(i, 0) + " - " +
+                        vista.dtmMiembros.getValueAt(i, 2) + ", " + vista.dtmMiembros.getValueAt(i, 1));
+            }
+            vista.comboMiembroMiembrosClase.setSelectedIndex(-1);
+            System.out.println("- Tabla miembros refrescada" +
+                    " - Combo miembro(en miembrosClase) refrescado");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void insertarMiembro() {
-        if(vista.comboEntrenadorMiembro.getSelectedItem()!=null){
+        if (vista.comboEntrenadorMiembro.getSelectedItem() != null) {
             modelo.insertarMiembro(vista.txtNombreMiembro.getText(),
                     vista.txtApellidoMiembro.getText(),
                     vista.txtFechaNacimientoMiembro.getDate(),
@@ -324,8 +370,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             hayCamposVacios = true;
         }
 
-        if (hayCamposVacios){
-            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+        if (hayCamposVacios) {
+            String mensaje = "Campos necesarios: \n" + String.join("\n", camposVacios);
             Util.mostrarMensajeError(mensaje);
             return true;
         }
@@ -334,7 +380,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     private boolean hayCeldaMiembroSeleccionada() {
         int fila = vista.tablaMiembro.getSelectedRow();
-        if(fila != -1){
+        if (fila != -1) {
             return true;
         }
         Util.mostrarMensajeError("No has seleccionado ningun miembro en la tabla");
@@ -345,8 +391,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         int fila = vista.tablaMiembro.getSelectedRow();
         int idMiembro = (int) vista.tablaMiembro.getValueAt(fila, 0);
 
-        if(vista.comboEntrenadorMiembro.getSelectedItem()!=null){
-            modelo.modificarMiembro(idMiembro,vista.txtNombreMiembro.getText(),
+        if (vista.comboEntrenadorMiembro.getSelectedItem() != null) {
+            modelo.modificarMiembro(idMiembro, vista.txtNombreMiembro.getText(),
                     vista.txtApellidoMiembro.getText(),
                     vista.txtFechaNacimientoMiembro.getDate(),
                     vista.txtDniMiembro.getText(),
@@ -355,7 +401,7 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                     String.valueOf(vista.comboMembresiaMiembro.getSelectedItem()),
                     String.valueOf(vista.comboEntrenadorMiembro.getSelectedItem()));
         } else {
-            modelo.modificarMiembro(idMiembro,vista.txtNombreMiembro.getText(),
+            modelo.modificarMiembro(idMiembro, vista.txtNombreMiembro.getText(),
                     vista.txtApellidoMiembro.getText(),
                     vista.txtFechaNacimientoMiembro.getDate(),
                     vista.txtDniMiembro.getText(),
@@ -367,26 +413,26 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     // ENTRENADOR
     private void refrescarEntrenadores() {
-        try{
+        try {
             vista.tablaEntrenador.setModel(construirTableModel(modelo.consultarEntrenador(), vista.dtmEntrenadores));
             vista.comboEntrenadorMiembro.removeAllItems();
             vista.comboEntrenadorClase.removeAllItems();
-            for(int i = 0; i< vista.dtmEntrenadores.getRowCount();i++){
-                vista.comboEntrenadorMiembro.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
-                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
-                vista.comboEntrenadorClase.addItem(vista.dtmEntrenadores.getValueAt(i,0)+" - "+
-                        vista.dtmEntrenadores.getValueAt(i,2)+", " + vista.dtmEntrenadores.getValueAt(i, 1));
+            for (int i = 0; i < vista.dtmEntrenadores.getRowCount(); i++) {
+                vista.comboEntrenadorMiembro.addItem(vista.dtmEntrenadores.getValueAt(i, 0) + " - " +
+                        vista.dtmEntrenadores.getValueAt(i, 2) + ", " + vista.dtmEntrenadores.getValueAt(i, 1));
+                vista.comboEntrenadorClase.addItem(vista.dtmEntrenadores.getValueAt(i, 0) + " - " +
+                        vista.dtmEntrenadores.getValueAt(i, 2) + ", " + vista.dtmEntrenadores.getValueAt(i, 1));
             }
             vista.comboEntrenadorMiembro.setSelectedIndex(-1);
             vista.comboEntrenadorClase.setSelectedIndex(-1);
             System.out.println("- Tabla entrenadores refrescada" +
                     " - Combo entrenador(en miembros y clases) refrescado");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private boolean hayCamposVaciosEntrenador(){
+    private boolean hayCamposVaciosEntrenador() {
         ArrayList<String> camposVacios = new ArrayList<>();
         boolean hayCamposVacios = false;
         if (vista.txtNombreEntrenador.getText().isEmpty()) {
@@ -419,16 +465,16 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             hayCamposVacios = true;
         }
 
-        if (hayCamposVacios){
-            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+        if (hayCamposVacios) {
+            String mensaje = "Campos necesarios: \n" + String.join("\n", camposVacios);
             Util.mostrarMensajeError(mensaje);
             return true;
         }
         return false;
     }
 
-    private void insertarEntrenador(){
-        if(vista.comboEspecialidadEntrenador.getSelectedItem()!=null){
+    private void insertarEntrenador() {
+        if (vista.comboEspecialidadEntrenador.getSelectedItem() != null) {
             modelo.insertarEntrenador(vista.txtNombreEntrenador.getText(),
                     vista.txtApellidoEntrenador.getText(),
                     vista.txtDniEntrenador.getText(),
@@ -446,20 +492,20 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         }
     }
 
-    private boolean hayCeldaEntrenadorSeleccionada(){
+    private boolean hayCeldaEntrenadorSeleccionada() {
         int fila = vista.tablaEntrenador.getSelectedRow();
-        if(fila!=-1){
+        if (fila != -1) {
             return true;
         }
         Util.mostrarMensajeError("No has seleccionado ningun entrenador en la tabla");
         return false;
     }
 
-    private void modificarEntrenador(){
+    private void modificarEntrenador() {
         int fila = vista.tablaEntrenador.getSelectedRow();
         int idEntrenador = (int) vista.tablaEntrenador.getValueAt(fila, 0);
 
-        if(vista.comboEspecialidadEntrenador.getSelectedItem()!=null){
+        if (vista.comboEspecialidadEntrenador.getSelectedItem() != null) {
             modelo.modificarEntrenador(idEntrenador,
                     vista.txtNombreEntrenador.getText(),
                     vista.txtApellidoEntrenador.getText(),
@@ -483,23 +529,23 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     // CLASE
     private void refrescarClases() {
-        try{
+        try {
             vista.tablaClase.setModel(construirTableModel(modelo.consultarClase(), vista.dtmClases));
             vista.comboClaseMiembrosClase.removeAllItems();
             vista.comboClaseMiembrosClase.removeAllItems();
-            for(int i = 0; i< vista.dtmClases.getRowCount();i++){
-                vista.comboClaseMiembrosClase.addItem(vista.dtmClases.getValueAt(i,0)+" - "+
-                        vista.dtmClases.getValueAt(i,1));
+            for (int i = 0; i < vista.dtmClases.getRowCount(); i++) {
+                vista.comboClaseMiembrosClase.addItem(vista.dtmClases.getValueAt(i, 0) + " - " +
+                        vista.dtmClases.getValueAt(i, 1));
             }
             vista.comboClaseMiembrosClase.setSelectedIndex(-1);
             System.out.println("- Tabla clases refrescada" +
                     " - Combo clases(en miembros y clases) refrescado");
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    private boolean hayCamposVaciosClase(){
+    private boolean hayCamposVaciosClase() {
         ArrayList<String> camposVacios = new ArrayList<>();
         boolean hayCamposVacios = false;
         if (vista.txtNombreClase.getText().isEmpty()) {
@@ -517,8 +563,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             hayCamposVacios = true;
         }
 
-        if (hayCamposVacios){
-            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+        if (hayCamposVacios) {
+            String mensaje = "Campos necesarios: \n" + String.join("\n", camposVacios);
             Util.mostrarMensajeError(mensaje);
             return true;
         }
@@ -560,16 +606,16 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         }
     }
 
-    private boolean hayCeldaClaseSeleccionada(){
+    private boolean hayCeldaClaseSeleccionada() {
         int fila = vista.tablaClase.getSelectedRow();
-        if(fila!=-1){
+        if (fila != -1) {
             return true;
         }
         Util.mostrarMensajeError("No has seleccionado ninguna clase en la tabla");
         return false;
     }
 
-    private void modificarClase(){
+    private void modificarClase() {
         int fila = vista.tablaClase.getSelectedRow();
         int idClase = (int) vista.tablaClase.getValueAt(fila, 0);
 
@@ -607,15 +653,33 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     }
 
     // MIEMBROSCLASE
+    private void refrescarMiembrosClase() {
+        try {
+            vista.tablaMiembrosClase.setModel(construirTableModel(modelo.consultarMiembroClase(), vista.dtmMiembrosClases));
+            System.out.println("- Tabla miembrosClase refrescada");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void refrescarMiembrosClasePorClase() {
+        try {
+            vista.tablaMiembrosClase.setModel(construirTableModel(modelo.consultarMiembroClasePorClase(), vista.dtmMiembrosClases));
+            System.out.println("- Tabla miembrosClase refrescada");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean hayCamposVaciosMiembroClase() {
         ArrayList<String> camposVacios = new ArrayList<>();
         boolean hayCamposVacios = false;
-        if (vista.comboMiembroMiembrosClase.getSelectedItem()==null) {
+        if (vista.comboMiembroMiembrosClase.getSelectedItem() == null) {
             camposVacios.add("miembro");
             hayCamposVacios = true;
         }
 
-        if (vista.comboClaseMiembrosClase.getSelectedItem()==null) {
+        if (vista.comboClaseMiembrosClase.getSelectedItem() == null) {
             camposVacios.add("clase");
             hayCamposVacios = true;
         }
@@ -625,25 +689,26 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
             hayCamposVacios = true;
         }
 
-        if (hayCamposVacios){
-            String mensaje = "Campos necesarios: \n"+ String.join("\n", camposVacios);
+        if (hayCamposVacios) {
+            String mensaje = "Campos necesarios: \n" + String.join("\n", camposVacios);
             Util.mostrarMensajeError(mensaje);
             return true;
         }
         return false;
     }
 
-    private boolean hayCeldaMiembroClaseSeleccionada(){
+    private boolean hayCeldaMiembroClaseSeleccionada() {
         int fila = vista.tablaMiembrosClase.getSelectedRow();
-        if(fila!=-1){
+        if (fila != -1) {
             return true;
         }
         Util.mostrarMensajeError("No has seleccionado ninguna fila en la tabla");
         return false;
     }
 
+
     // VENTANA
-    private void addWindowListeners(WindowListener listener){
+    private void addWindowListeners(WindowListener listener) {
         vista.addWindowListener(listener);
     }
 
@@ -661,15 +726,15 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         // nombres de las columnas
         Vector<String> nombresColumnas = new Vector<>();
         int numColumnas = metaData.getColumnCount();
-        for (int columna = 1; columna <= numColumnas; columna++){
+        for (int columna = 1; columna <= numColumnas; columna++) {
             nombresColumnas.add(metaData.getColumnLabel(columna));
         }
 
         // datos de la tabla
         Vector<Vector<Object>> data = new Vector<>();
-        setDataVector(rs,numColumnas,data);
+        setDataVector(rs, numColumnas, data);
 
-        modelo.setDataVector(data,nombresColumnas);
+        modelo.setDataVector(data, nombresColumnas);
         return modelo;
     }
 
@@ -686,37 +751,37 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
     private void iniciarListas(ListSelectionListener listener) {
         // especialidad
         vista.tablaEspecialidad.setCellSelectionEnabled(true);
-        vista.tablaEspecialidad.setDefaultEditor(Object.class,null);
+        vista.tablaEspecialidad.setDefaultEditor(Object.class, null);
         vista.tablaEspecialidad.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaEspecialidad.getSelectionModel().addListSelectionListener(listener);
 
         // membresia
         vista.tablaMembresia.setCellSelectionEnabled(true);
-        vista.tablaMembresia.setDefaultEditor(Object.class,null);
+        vista.tablaMembresia.setDefaultEditor(Object.class, null);
         vista.tablaMembresia.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMembresia.getSelectionModel().addListSelectionListener(listener);
 
         // miembro
         vista.tablaMiembro.setCellSelectionEnabled(true);
-        vista.tablaMiembro.setDefaultEditor(Object.class,null);
+        vista.tablaMiembro.setDefaultEditor(Object.class, null);
         vista.tablaMiembro.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMiembro.getSelectionModel().addListSelectionListener(listener);
 
         // entrenador
         vista.tablaEntrenador.setCellSelectionEnabled(true);
-        vista.tablaEntrenador.setDefaultEditor(Object.class,null);
+        vista.tablaEntrenador.setDefaultEditor(Object.class, null);
         vista.tablaEntrenador.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaEntrenador.getSelectionModel().addListSelectionListener(listener);
 
         // clase
         vista.tablaClase.setCellSelectionEnabled(true);
-        vista.tablaClase.setDefaultEditor(Object.class,null);
+        vista.tablaClase.setDefaultEditor(Object.class, null);
         vista.tablaClase.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaClase.getSelectionModel().addListSelectionListener(listener);
 
         // miembro_clase
         vista.tablaMiembrosClase.setCellSelectionEnabled(true);
-        vista.tablaMiembrosClase.setDefaultEditor(Object.class,null);
+        vista.tablaMiembrosClase.setDefaultEditor(Object.class, null);
         vista.tablaMiembrosClase.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         vista.tablaMiembrosClase.getSelectionModel().addListSelectionListener(listener);
 
@@ -725,20 +790,20 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
 
     @Override
     public void valueChanged(ListSelectionEvent e) {
-        if(!e.getValueIsAdjusting() && !((ListSelectionModel) e.getSource()).isSelectionEmpty()){
-            if(e.getSource().equals(vista.tablaMiembro.getSelectionModel())){
+        if (!e.getValueIsAdjusting() && !((ListSelectionModel) e.getSource()).isSelectionEmpty()) {
+            if (e.getSource().equals(vista.tablaMiembro.getSelectionModel())) {
                 int fila = vista.tablaMiembro.getSelectedRow();
                 vista.txtNombreMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 1)));
                 vista.txtApellidoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 2)));
-                vista.txtFechaNacimientoMiembro.setDate(Date.valueOf(String.valueOf(vista.tablaMiembro.getValueAt(fila,3))).toLocalDate());
+                vista.txtFechaNacimientoMiembro.setDate(Date.valueOf(String.valueOf(vista.tablaMiembro.getValueAt(fila, 3))).toLocalDate());
                 vista.txtDniMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 4)));
                 vista.txtTelefonoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 5)));
                 vista.txtCorreoMiembro.setText(String.valueOf(vista.tablaMiembro.getValueAt(fila, 6)));
                 String idMembresia = String.valueOf(vista.tablaMiembro.getValueAt(fila, 7));
                 buscarItemComboBox(vista.comboMembresiaMiembro, idMembresia);
-                String idMiembro = String.valueOf(vista.tablaMiembro.getValueAt(fila,8));
+                String idMiembro = String.valueOf(vista.tablaMiembro.getValueAt(fila, 8));
                 buscarItemComboBox(vista.comboEntrenadorMiembro, idMiembro);
-            } else if (e.getSource().equals(vista.tablaEntrenador.getSelectionModel())){
+            } else if (e.getSource().equals(vista.tablaEntrenador.getSelectionModel())) {
                 int fila = vista.tablaEntrenador.getSelectedRow();
                 vista.txtNombreEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 1)));
                 vista.txtApellidoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 2)));
@@ -746,47 +811,47 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
                 vista.txtCorreoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 4)));
                 vista.txtTelefonoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 5)));
                 vista.txtSueldoEntrenador.setText(String.valueOf(vista.tablaEntrenador.getValueAt(fila, 6)));
-                String idEspecialidad = String.valueOf(vista.tablaEntrenador.getValueAt(fila,7));
+                String idEspecialidad = String.valueOf(vista.tablaEntrenador.getValueAt(fila, 7));
                 buscarItemComboBox(vista.comboEspecialidadEntrenador, idEspecialidad);
-            } else if (e.getSource().equals(vista.tablaClase.getSelectionModel())){
+            } else if (e.getSource().equals(vista.tablaClase.getSelectionModel())) {
                 int fila = vista.tablaClase.getSelectedRow();
-                vista.txtNombreClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,1)));
-                vista.txtHoraInicioClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,2)));
-                vista.txtDuracionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,3)));
-                if(vista.tablaClase.getValueAt(fila,4)==null){
+                vista.txtNombreClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila, 1)));
+                vista.txtHoraInicioClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila, 2)));
+                vista.txtDuracionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila, 3)));
+                if (vista.tablaClase.getValueAt(fila, 4) == null) {
                     vista.txtDescripcionClase.setText("");
-                } else{
-                    vista.txtDescripcionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila,4)));
+                } else {
+                    vista.txtDescripcionClase.setText(String.valueOf(vista.tablaClase.getValueAt(fila, 4)));
                 }
-                String idEntrenador = String.valueOf(vista.tablaClase.getValueAt(fila,5));
+                String idEntrenador = String.valueOf(vista.tablaClase.getValueAt(fila, 5));
                 buscarItemComboBox(vista.comboEntrenadorClase, idEntrenador);
-            } else if (e.getSource().equals(vista.tablaMiembrosClase.getSelectionModel())){
+            } else if (e.getSource().equals(vista.tablaMiembrosClase.getSelectionModel())) {
                 int fila = vista.tablaMiembrosClase.getSelectedRow();
-                String idMiembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,0));
+                String idMiembro = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila, 0));
                 buscarItemComboBox(vista.comboMiembroMiembrosClase, idMiembro);
-                String idClase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,1));
+                String idClase = String.valueOf(vista.tablaMiembrosClase.getValueAt(fila, 1));
                 buscarItemComboBox(vista.comboClaseMiembrosClase, idClase);
-                vista.fechaInscripcionMiembrosClase.setDate(Date.valueOf(String.valueOf(vista.tablaMiembrosClase.getValueAt(fila,2))).toLocalDate());
-                vista.checkBoxNovatoMiembrosClase.setSelected((Boolean) vista.tablaMiembrosClase.getValueAt(fila,3));
+                vista.fechaInscripcionMiembrosClase.setDate(Date.valueOf(String.valueOf(vista.tablaMiembrosClase.getValueAt(fila, 2))).toLocalDate());
+                vista.checkBoxNovatoMiembrosClase.setSelected((Boolean) vista.tablaMiembrosClase.getValueAt(fila, 3));
             }
         }
     }
 
-    private void buscarItemComboBox(JComboBox combobox, String idABuscar){
+    private void buscarItemComboBox(JComboBox combobox, String idABuscar) {
         boolean encontrado = false;
-        for(int i = 0; i < combobox.getItemCount();i++){
-            if(((String) combobox.getItemAt(i)).startsWith(idABuscar + " - ")){
+        for (int i = 0; i < combobox.getItemCount(); i++) {
+            if (((String) combobox.getItemAt(i)).startsWith(idABuscar + " - ")) {
                 encontrado = true;
                 combobox.setSelectedIndex(i);
                 break;
             }
         }
-        if(!encontrado){
+        if (!encontrado) {
             combobox.setSelectedIndex(-1);
         }
     }
 
-    private void addActionListeners(ActionListener listener){
+    private void addActionListeners(ActionListener listener) {
         // miembros
         vista.insertarMiembroButton.addActionListener(listener);
         vista.insertarMiembroButton.setActionCommand("insertarMiembro");
@@ -796,7 +861,8 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.eliminarMiembroButton.setActionCommand("eliminarMiembro");
         vista.borrarEntrenadorMiembroButton.addActionListener(listener);
         vista.borrarEntrenadorMiembroButton.setActionCommand("borrarEntrenadorMiembro");
-
+        vista.filtrarMiembroButton.addActionListener(listener);
+        vista.filtrarMiembroButton.setActionCommand("filtrarMiembro");
 
         // entrenadores
         vista.modificarEntrenadorButton.addActionListener(listener);
@@ -825,7 +891,12 @@ public class Controlador implements ActionListener, ItemListener, ListSelectionL
         vista.modificarMiembroClaseButton.setActionCommand("modificarMiembroClase");
         vista.eliminarMiembroClaseButton.addActionListener(listener);
         vista.eliminarMiembroClaseButton.setActionCommand("eliminarMiembroClase");
+        vista.miembroRadioButton.addActionListener(this);
+        vista.miembroRadioButton.setActionCommand("ordenarMiembro");
+        vista.claseRadioButton.addActionListener(this);
+        vista.claseRadioButton.setActionCommand("ordenarClase");
 
+        // Pestaña
         vista.itemOpciones.addActionListener(listener);
         vista.itemSalir.addActionListener(listener);
         vista.btnValidate.addActionListener(listener);

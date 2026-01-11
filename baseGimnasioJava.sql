@@ -61,4 +61,48 @@ CREATE TABLE IF NOT EXISTS miembro_clase (
     FOREIGN KEY (id_miembro) REFERENCES miembros(id_miembro) ON DELETE CASCADE,
     FOREIGN KEY (id_clase) REFERENCES clases(id_clase) ON DELETE CASCADE
 );
+--
+create function existeDniEntrenador(f_dni varchar(150))
+returns bit
+begin
+    if (select count(*) from entrenadores where dni = f_dni) > 0 then
+        return 1;
+    end if;
+    return 0;
+end;
+--
+create function existeDniMiembro(f_dni varchar(50))
+returns bit
+begin
+    if (select count(*) from miembros where dni = f_dni) > 0 then
+        return 1;
+    end if;
+    return 0;
+end;
+--
+create function existeNombreClase(f_nombre varchar(150))
+returns bit
+begin
+    if (select count(*) from clases where nombre = f_nombre) > 0 then
+        return 1;
+    end if;
+    return 0;
+end;
+--
+create function existeMiembroClase(f_id_miembro int, f_id_clase int)
+returns bit
+begin
+    if (select count(*) from miembro_clase
+        where id_miembro = f_id_miembro and id_clase = f_id_clase) > 0 then
+        return 1;
+    end if;
+    return 0;
+end;
+--
+create procedure buscarMiembroPorDni(IN f_dni varchar(50))
+begin
+    select *
+    from miembros
+    where dni = f_dni;
+end;
 
